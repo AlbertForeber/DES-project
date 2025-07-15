@@ -1,4 +1,4 @@
-]package com.example.sdo_project
+package com.example.sdo_project
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
