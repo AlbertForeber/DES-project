@@ -1,3 +1,6 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -8,7 +11,7 @@ plugins {
 android {
     namespace = "com.example.sdo_project"
     compileSdk = 35
-
+    android.buildFeatures.buildConfig = true
     defaultConfig {
         applicationId = "com.example.sdo_project"
         minSdk = 33
@@ -16,7 +19,13 @@ android {
         versionCode = 1
         versionName = "1.0"
 
+        val properties = Properties().apply {
+            load(rootProject.file("local.properties").inputStream())
+        }
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "supabaseUrl", "\"${properties.getProperty("SUPABASE_URL")}\"")
+        buildConfigField("String", "supabaseApi", "\"${properties.getProperty("SUPABASE_API")}\"")
     }
 
     buildTypes {
