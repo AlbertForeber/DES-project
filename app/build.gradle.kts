@@ -1,5 +1,3 @@
-import java.util.Properties
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -7,13 +5,7 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization") version "2.2.20-Beta1"
 }
 
-
 android {
-
-    val localProperties = Properties().apply {
-        load(rootProject.file("local.properties").inputStream())
-    }
-
     namespace = "com.example.sdo_project"
     compileSdk = 35
 
@@ -25,9 +17,6 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String","supabaseUrl", "\"https://wgjlffhatxvfqjwsmnos.supabase.co\"")
-
-        buildConfigField("String","supabaseApi", "\"${localProperties.getProperty("SUPABASE_API_KEY")}\"")
     }
 
     buildTypes {
@@ -47,7 +36,6 @@ android {
         jvmTarget = "11"
     }
     buildFeatures {
-        buildConfig = true
         compose = true
     }
 }
