@@ -1,3 +1,4 @@
+import com.android.build.gradle.internal.cxx.configure.gradleLocalProperties
 import java.util.Properties
 
 plugins {
@@ -7,16 +8,10 @@ plugins {
     id("org.jetbrains.kotlin.plugin.serialization") version "2.2.20-Beta1"
 }
 
-
 android {
-
-    val localProperties = Properties().apply {
-        load(rootProject.file("local.properties").inputStream())
-    }
-
     namespace = "com.example.sdo_project"
     compileSdk = 35
-
+    android.buildFeatures.buildConfig = true
     defaultConfig {
         applicationId = "com.example.sdo_project"
         minSdk = 33
@@ -24,10 +19,13 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String","supabaseUrl", "\"https://wgjlffhatxvfqjwsmnos.supabase.co\"")
+        val properties = Properties().apply {
+            load(rootProject.file("local.properties").inputStream())
+        }
 
-        buildConfigField("String","supabaseApi", "\"${localProperties.getProperty("SUPABASE_API_KEY")}\"")
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "supabaseUrl", "\"${properties.getProperty("SUPABASE_URL")}\"")
+        buildConfigField("String", "supabaseApi", "\"${properties.getProperty("SUPABASE_API")}\"")
     }
 
     buildTypes {
@@ -47,7 +45,6 @@ android {
         jvmTarget = "11"
     }
     buildFeatures {
-        buildConfig = true
         compose = true
     }
 }
