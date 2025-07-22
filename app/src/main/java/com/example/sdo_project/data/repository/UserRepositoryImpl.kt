@@ -12,7 +12,7 @@ class UserRepositoryImpl(
     private val supabaseClient: SupabaseClient
 ): UserRepository {
 
-    override suspend fun getProfile(uuid: String): Result<User?> {
+    override suspend fun getProfile(uuid: String): Result<User> {
         val userBaseInfo= supabaseClient.from("user")
             .select {
                 filter {
@@ -23,13 +23,13 @@ class UserRepositoryImpl(
         return try {
             when (userBaseInfo?.isTeacher) {
                 true -> {
-                  Result.success( getStudentInfo(uuid))
+                  Result.success(getStudentInfo(uuid))
                 }
                 false -> {
                    Result.success(getTeacherInfo(uuid))
                 }
                 else -> {
-                        Result.failure(throw NoSuchElementException("No user was found with uuid: ${uuid}"))
+                    Result.failure( NoSuchElementException("No user was found with uuid: $uuid") )
                 }
             }
         } catch (e: Exception){
@@ -68,27 +68,27 @@ class UserRepositoryImpl(
             Result.failure(e)
         }
 
-        return Result.failure(throw Exception("po"))
+        return Result.failure(Exception("po"))
 
     }
 
-    private suspend fun getStudentInfo(uuid: String): User?{
+    private suspend fun getStudentInfo(uuid: String): User{
         return supabaseClient.from("student").select {
             filter {
                 eq("uuid", uuid)
             }
-        }.decodeSingleOrNull<StudentDto>()?.toDomain()
+        }.decodeSingle<StudentDto>().toDomain()
     }
 
-    private suspend fun getTeacherInfo(uuid: String): User?{
+    private suspend fun getTeacherInfo(uuid: String): User{
         return supabaseClient.from("teacher").select {
             filter {
                 eq("uuid", uuid)
             }
-        }.decodeSingleOrNull<TeacherDto>()?.toDomain()
+        }.decodeSingle<TeacherDto>().toDomain()
     }
 
-    private fun TeacherDto.toDomain():User {
+    private fun TeacherDto.toDomain(): User {
         return User(
             uuid = uuid,
             isTeacher = true,

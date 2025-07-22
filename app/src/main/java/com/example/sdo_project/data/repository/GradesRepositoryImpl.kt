@@ -5,11 +5,8 @@ import com.example.sdo_project.domain.models.GradeSection
 import com.example.sdo_project.domain.repository.GradesRepository
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
-import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
-import io.github.jan.supabase.postgrest.query.Columns
 import io.ktor.http.parameters
-import kotlinx.serialization.Serializable
 
 class GradesRepositoryImpl (
     private val client: SupabaseClient
@@ -22,8 +19,8 @@ class GradesRepositoryImpl (
         disciplineId: Int
     ): Result<List<GradeSection>> {
 
-        val current_uuid = client.auth.currentUserOrNull()?.id
-        if (current_uuid == null) return  Result.failure(throw Exception("no current user - GradesRepositoryImpl"))
+        val currentUuid = client.auth.currentUserOrNull()?.id
+        if (currentUuid == null) return  Result.failure(throw Exception("no current user - GradesRepositoryImpl"))
 
         try {
             val result =     client.postgrest.rpc("get_grade_sections_with_grades"){

@@ -14,13 +14,11 @@ class MaterialRepositoryImpl(
 
     override suspend fun getMaterials(parent: MaterialSection): Result<List<Material>> {
         try {
-
             val result = client.from("material")
                 .select{
                     filter {
                         eq("section_id", parent.id)
                     }
-
                 }.decodeList<Material>()
 
             return Result.success(result)
@@ -39,7 +37,7 @@ class MaterialRepositoryImpl(
         }
     }
 
-    override suspend fun getMaterialSections(disciplineId: Int, parentId:Int?): Result<List<MaterialSection>> {
+    override suspend fun getMaterialSections(disciplineId: Int, parentId: Int?): Result<List<MaterialSection>> {
         try {
             val result = client.from("material_section")
                 .select {
