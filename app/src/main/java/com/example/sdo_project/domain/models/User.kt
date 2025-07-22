@@ -1,7 +1,7 @@
 package com.example.sdo_project.domain.models
 
 open class User(
-    val id: Int,
+    val uuid: String,
     val isTeacher: Boolean,
     val personalCode: String,
     val surname: String,
