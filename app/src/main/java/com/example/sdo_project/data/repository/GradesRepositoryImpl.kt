@@ -7,6 +7,8 @@ import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.postgrest
 import io.ktor.http.parameters
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.put
 
 class GradesRepositoryImpl (
     private val client: SupabaseClient
@@ -23,13 +25,14 @@ class GradesRepositoryImpl (
         if (currentUuid == null) return  Result.failure(throw Exception("no current user - GradesRepositoryImpl"))
 
         try {
-            val result =     client.postgrest.rpc("get_grade_sections_with_grades"){
-                parameters {
-                    buildMap {
-                        put("student_id_param", studentUuid)
-                        put("discipline_id_param", disciplineId)
-                    }
-                }
+            val result =     client.postgrest.rpc("get_grade_sections_with_grades",
+                buildJsonObject{
+                    put("student_id_param", studentUuid)
+                    put("discipline_id_param", disciplineId)
+                }){
+
+
+
             }.decodeList<GradeSection>()
             return Result.success(result)
         }
@@ -49,15 +52,15 @@ class GradesRepositoryImpl (
         if (current_uuid == null) return  Result.failure(throw Exception("no current user - GradesRepositoryImpl"))
 
         try{
-            val result = client.postgrest.rpc("get_grade_point_with_grades"){
-                parameters {
-                    buildMap {
-                        put("student_id_param", studentUuid)
-                        put("discipline_id_param", disciplineId)
-                        put("section_id_param", sectionId)
+            val result = client.postgrest.rpc("get_grade_point_with_grades",
+                buildJsonObject {
+                    put("student_id_param", studentUuid)
+                    put("discipline_id_param", disciplineId)
+                    put("section_id_param", sectionId)
 
-                    }
-                }
+                }){
+
+
             }.decodeList<GradePoint>()
             return Result.success(result)
         }
