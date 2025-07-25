@@ -16,7 +16,7 @@ android {
     android.buildFeatures.buildConfig = true
     defaultConfig {
         applicationId = "com.example.sdo_project"
-        minSdk = 33
+        minSdk = 31
         targetSdk = 35
         versionCode = 1
         versionName = "1.0"
