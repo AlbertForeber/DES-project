@@ -53,4 +53,14 @@ class SupabaseAuthRepositoryImpl @Inject constructor(
             Result.failure(e)
         }
     }
+
+    override suspend fun sendResetLinkTo(email: String): Result<Unit> {
+        return try {
+            client.auth.resetPasswordForEmail(email)
+            Result.success(Unit)
+        }
+        catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
 }
