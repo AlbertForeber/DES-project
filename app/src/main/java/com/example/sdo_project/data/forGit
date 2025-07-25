@@ -1,0 +1,50 @@
+//first function
+CREATE OR REPLACE FUNCTION get_grade_sections_with_grades(student_id_param INT, discipline_param_id INT)
+RETURNS TABLE (
+    section_id INT,
+    section_name TEXT,
+    section_max_score INT,
+    section_current_score FLOAT
+
+) AS $$
+BEGIN
+
+    SELECT
+        gs.id AS section_id,
+        gs.name AS section_name,
+        SUM(g.score) AS section_current_score
+    FROM grade_section gs
+    JOIN grade_point  gp ON gs.id = gp.section_id
+    JOIN grade g ON gp.id = g.point_id
+    WHERE g.student_id = student_id_param
+    AND gp.discipline_id = discipline_param_id
+    GROUP BY gs.id, gs.name;
+END;
+$$ LANGUAGE plpgsql;
+
+------------------------------------------------------------------------
+//second function
+
+//CREATE OR REPLACE FUNCTION get_grade_point_with_grades(student_id_param INT, discipline_id_param INT, section_id_param INT)
+//RETURNS TABLE (
+//point_id INT,
+//point_name TEXT,
+//point_max_score INT,
+//point_current_score FLOAT
+//
+//) AS $$
+//BEGIN
+//
+//SELECT
+//gp.id AS point_id,
+//gp.name AS point_name,
+//g.score AS section_current_score
+//FROM grade_section gs
+//JOIN grade_point  gp ON gs.id = gp.section_id
+//JOIN grade g ON gp.id = g.point_id
+//WHERE g.student_id = student_id_param
+//AND gp.discipline_id = discipline_id_param
+//GROUP BY gs.id, gs.name;
+//END;
+//$$ LANGUAGE plpgsql;
+

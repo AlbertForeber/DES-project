@@ -6,8 +6,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class GradePointDto(
-    @SerialName("id") val id: Int,
-    @SerialName("name") val name: String,
-    @SerialName("section_id") val sectionId: Int,
-    @SerialName("max_score") val maxScore: Int
+    @SerialName("point_id") val id: Int,
+    @SerialName("point_name") val name: String,
+    @SerialName("point_current_score") val currentScore: Int,
+    @SerialName("point_max_score") val maxScore: Int
 )
