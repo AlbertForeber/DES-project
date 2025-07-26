@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
@@ -19,6 +20,8 @@ import com.example.sdo_project.data.repository.SupabaseAuthRepositoryImpl
 import com.example.sdo_project.data.repository.SupabaseDisciplineRepositoryImpl
 import com.example.sdo_project.data.repository.SupabaseGroupRepositoryImpl
 import com.example.sdo_project.domain.models.User
+import com.example.sdo_project.presentation.MainViewModel
+import com.example.sdo_project.presentation.navgraph.NavGraph
 import com.example.sdo_project.ui.theme.SDOprojectTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -34,10 +37,12 @@ class MainActivity : ComponentActivity() {
     // For repository testing
     @Inject
     lateinit var client: SupabaseClient
+    private val viewModel by viewModels<MainViewModel>()
     //
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
 
         // For repository testing
         val authRepository = SupabaseAuthRepositoryImpl(client)
@@ -51,13 +56,15 @@ class MainActivity : ComponentActivity() {
         setContent {
             SDOprojectTheme {
 
-                /* Использовалось для тестирования БД + Авторизации
+                //Использовалось для тестирования БД + Авторизации
 
                 LaunchedEffect(Unit) {
                     launch {
-                        val result = dbRepository.getDisciplines(
+                        authRepository.signInWithEmail("kate@mail.ru", "123123")
+                        Log.d("AUTH_STATUS", authRepository.getCurrentToken().getOrNull().toString())
+                        val result = disciplineRepository.getDisciplines(
                             User(
-                                uuid = "830fac75-cb1b-426d-8f5d-c5780edde534",
+                                uuid = "c7931316-491c-4415-b0fd-b6dc5208588b",
                                 isTeacher = false,
                                 personalCode = "fashfash",
                                 surname = "1234",
@@ -71,18 +78,19 @@ class MainActivity : ComponentActivity() {
                         result.getOrNull()?.let { Log.d("DB_test", it.toString()) }
                     }
                 }
-                */
-                LaunchedEffect(Unit) {
-                    launch {
-                        Log.d("AUTH_STATUS", authRepository.getCurrentToken().getOrNull().toString())
-                         val result = groupRepository.getGroupsByTeacherUuid(
-                            "830fac75-cb1b-426d-8f5d-c5780edde532",
-                            disciplineId = 2
-                         )
-                        result.exceptionOrNull()?.let { Log.d("DB_test", it.toString()) }
-                        result.getOrNull()?.let { Log.d("DB_test", it.toString()) }
-                    }
-                }
+
+//                LaunchedEffect(Unit) {
+//                    launch {
+//                        Log.d("AUTH_STATUS", authRepository.getCurrentToken().getOrNull().toString())
+//                         val result = groupRepository.getGroupsByTeacherUuid(
+//                            "830fac75-cb1b-426d-8f5d-c5780edde532",
+//                            disciplineId = 2
+//                         )
+//                        result.exceptionOrNull()?.let { Log.d("DB_test", it.toString()) }
+//                        result.getOrNull()?.let { Log.d("DB_test", it.toString()) }
+//                    }
+//                }
+                //NavGraph(viewModel)
             }
         }
     }

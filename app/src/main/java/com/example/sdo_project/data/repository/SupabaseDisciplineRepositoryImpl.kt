@@ -31,13 +31,16 @@ class SupabaseDisciplineRepositoryImpl @Inject constructor(
 }
 
 private suspend fun getDisciplinesForStudent(uuid: String, client: SupabaseClient): List<Discipline> {
-    return client.postgrest
+    Log.d("DB_TEST", uuid)
+    val result = client.postgrest
         .rpc(                                            // Синтаксис вызова Postgre-функции в Kotlin DSL
             "get_disciplines_by_student_uuid",
             buildJsonObject {
                 put("uuid_param", uuid)                  // Создаем json-объект с параметрами для функции
-            }
-        ).decodeList<DisciplineDto>().map { it.toDomain() }
+            }`
+        )
+    Log.d("DB_TEST", result.data)
+    return result.decodeList<DisciplineDto>().map { it.toDomain() }
     // Также существует параметр request, как и в остальных функциях Supabase DB (не используем)
 }
 private suspend fun getDisciplinesForTeacher(uuid: String, client: SupabaseClient): List<Discipline> {
@@ -55,8 +58,8 @@ private fun DisciplineDto.toDomain(): Discipline {
         name = this.name,
         id = this.id,
         term = this.term,
-        departmentId = this.departmentId,
-        courseId = this.courseId,
-        instituteId = this.instituteId,
+        departmentName = this.departmentName,
+        courseName = this.courseName,
+        instituteName = this.instituteName,
     )
 }

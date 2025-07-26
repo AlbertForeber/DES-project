@@ -6,7 +6,7 @@ import jakarta.inject.Inject
 class ResetUseCase @Inject constructor(
     private val repository: AuthRepository
 ) {
-    suspend operator fun invoke( email: String ) {
-        repository.sendResetLinkTo( email )
+    suspend operator fun invoke( email: String ): Result<Unit> {
+        return repository.sendResetLinkTo( email )
     }
 }

@@ -5,8 +5,8 @@ import com.example.sdo_project.data.repository.SupabaseAuthRepositoryImpl
 import com.example.sdo_project.data.repository.SupabaseDisciplineRepositoryImpl
 import com.example.sdo_project.domain.repository.AuthRepository
 import com.example.sdo_project.domain.repository.DisciplineRepository
-import com.example.sdo_project.domain.usecase.AuthHomeUseCases
 import com.example.sdo_project.domain.usecase.AuthUseCases
+import com.example.sdo_project.domain.usecase.ChangePasswordUseCase
 import com.example.sdo_project.domain.usecase.GetTokenUseCase
 import com.example.sdo_project.domain.usecase.LoginUseCase
 import com.example.sdo_project.domain.usecase.LogoutUseCase
@@ -55,8 +55,9 @@ object AppModule {
         login = LoginUseCase( repo ),
         register = SignupUseCase( repo ),
         reset = ResetUseCase( repo ),
-        logout = ResetUseCase( repo ),
-        getToken = GetTokenUseCase( repo )
+        logout = LogoutUseCase( repo ),
+        getToken = GetTokenUseCase( repo ),
+        changePass = ChangePasswordUseCase( repo )
     )
 
 
