@@ -1,9 +1,6 @@
-package com.example.sdo_project.domain.usecase
+package com.example.sdo_project.domain.usecase.group
 
 import com.example.sdo_project.domain.models.Group
-import com.example.sdo_project.domain.models.User
-import com.example.sdo_project.domain.repository.AuthRepository
-import com.example.sdo_project.domain.repository.DisciplineRepository
 import com.example.sdo_project.domain.repository.GroupRepository
 import jakarta.inject.Inject
 

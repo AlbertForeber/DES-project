@@ -4,14 +4,18 @@ import android.util.Log
 import com.example.sdo_project.data.remote.dto.GradeDto
 import com.example.sdo_project.data.remote.dto.GradePointDto
 import com.example.sdo_project.data.remote.dto.GradeSectionDto
+import com.example.sdo_project.data.remote.dto.GradeTeacherPointDto
 import com.example.sdo_project.data.remote.dto.GradeWithStudentInfoDto
 import com.example.sdo_project.domain.models.GradePoint
 import com.example.sdo_project.domain.models.GradeSection
+import com.example.sdo_project.domain.models.GradeTeacherPoint
 import com.example.sdo_project.domain.models.GradeWithStudentInfo
 import com.example.sdo_project.domain.repository.GradesRepository
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
+import io.github.jan.supabase.postgrest.query.Columns
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.put
 
@@ -105,6 +109,20 @@ class GradesRepositoryImpl (
 
     }
 
+    override suspend fun getPointsByDisciplineId(disciplineId: Int): Result<List<GradeTeacherPoint>> {
+        return try {
+            val result = client
+                .from("grade_point")
+                .select(Columns.list("id", "name", "max_score")) {
+                    filter { eq("discipline_id", disciplineId) }
+                }.decodeList<GradeTeacherPointDto>().map { it.toDomain() }
+            Result.success(result)
+        }
+        catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
     private fun GradePointDto.toDomain(): GradePoint{
         return GradePoint(
             id = id,
@@ -125,6 +143,7 @@ class GradesRepositoryImpl (
 
     private fun GradeWithStudentInfoDto.toDomain(): GradeWithStudentInfo{
         return GradeWithStudentInfo(
+            uuid = uuid,
             name = name,
             surname = surname,
             patronymic = patronymic,
@@ -132,4 +151,12 @@ class GradesRepositoryImpl (
         )
     }
 
+}
+
+private fun GradeTeacherPointDto.toDomain(): GradeTeacherPoint {
+    return GradeTeacherPoint(
+        id = id,
+        name = name,
+        maxScore = maxScore
+    )
 }

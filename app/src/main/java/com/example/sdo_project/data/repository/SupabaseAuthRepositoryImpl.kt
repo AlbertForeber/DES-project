@@ -3,7 +3,11 @@ package com.example.sdo_project.data.repository
 import com.example.sdo_project.domain.repository.AuthRepository
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.auth.exception.AuthRestException
 import io.github.jan.supabase.auth.providers.builtin.Email
+import io.github.jan.supabase.exceptions.HttpRequestException
+import io.github.jan.supabase.exceptions.RestException
+import io.ktor.client.plugins.HttpRequestTimeoutException
 import jakarta.inject.Inject
 
 class SupabaseAuthRepositoryImpl @Inject constructor(
@@ -17,7 +21,16 @@ class SupabaseAuthRepositoryImpl @Inject constructor(
             }
             Result.success(Unit)
         }
-        catch (e: Exception) {
+        catch (e: RestException) {
+            Result.failure(e)
+        }
+        catch (e: HttpRequestTimeoutException) {
+            Result.failure(Exception("Network issue: Timeout"))
+        }
+        catch (e: HttpRequestException) {
+            Result.failure(Exception("Network issue"))
+        }
+        catch( e: Exception ) {
             Result.failure(e)
         }
     }
@@ -30,7 +43,22 @@ class SupabaseAuthRepositoryImpl @Inject constructor(
             }
             Result.success(Unit)
         }
-        catch (e: Exception) {
+        catch (e: RestException) {
+            val exception = Exception(when {
+                e.message?.contains("validation_failed") == true -> "Fields must be filled"
+                e.message?.contains("invalid_credentials") == true -> "Email or password is invalid"
+                e.message?.contains("Email must not be blank") == true -> "Email must not be blank"
+                else -> "Unknown error"
+            })
+            Result.failure(exception)
+        }
+        catch (e: HttpRequestTimeoutException) {
+            Result.failure(Exception("Network issue: Timeout"))
+        }
+        catch (e: HttpRequestException) {
+            Result.failure(Exception("Network issue"))
+        }
+        catch( e: Exception ) {
             Result.failure(e)
         }
     }
@@ -49,7 +77,16 @@ class SupabaseAuthRepositoryImpl @Inject constructor(
             client.auth.signOut()
             Result.success(Unit)
         }
-        catch (e: Exception) {
+        catch (e: RestException) {
+            Result.failure(e)
+        }
+        catch (e: HttpRequestTimeoutException) {
+            Result.failure(Exception("Network issue: Timeout"))
+        }
+        catch (e: HttpRequestException) {
+            Result.failure(Exception("Network issue"))
+        }
+        catch( e: Exception ) {
             Result.failure(e)
         }
     }
@@ -59,9 +96,19 @@ class SupabaseAuthRepositoryImpl @Inject constructor(
             client.auth.resetPasswordForEmail(email)
             Result.success(Unit)
         }
-        catch (e: Exception) {
+        catch (e: RestException) {
             Result.failure(e)
         }
+        catch (e: HttpRequestTimeoutException) {
+            Result.failure(Exception("Network issue: Timeout"))
+        }
+        catch (e: HttpRequestException) {
+            Result.failure(Exception("Network issue"))
+        }
+        catch( e: Exception ) {
+            Result.failure(e)
+        }
+
     }
 
     override suspend fun changePassword(password: String): Result<Unit> {
@@ -71,7 +118,16 @@ class SupabaseAuthRepositoryImpl @Inject constructor(
             }
             Result.success(Unit)
         }
-        catch (e: Exception) {
+        catch (e: RestException) {
+            Result.failure(e)
+        }
+        catch (e: HttpRequestTimeoutException) {
+            Result.failure(Exception("Network issue: Timeout"))
+        }
+        catch (e: HttpRequestException) {
+            Result.failure(Exception("Network issue"))
+        }
+        catch( e: Exception ) {
             Result.failure(e)
         }
     }

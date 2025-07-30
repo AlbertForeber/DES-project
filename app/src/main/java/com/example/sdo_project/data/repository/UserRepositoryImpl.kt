@@ -1,19 +1,23 @@
 package com.example.sdo_project.data.repository
 
+import android.util.Log
+import androidx.compose.runtime.traceEventEnd
 import com.example.sdo_project.data.remote.dto.StudentDto
 import com.example.sdo_project.data.remote.dto.TeacherDto
 import com.example.sdo_project.data.remote.dto.UserDto
 import com.example.sdo_project.domain.models.User
 import com.example.sdo_project.domain.repository.UserRepository
 import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.postgrest.from
+import java.nio.file.AccessDeniedException
 
 class UserRepositoryImpl(
     private val supabaseClient: SupabaseClient
 ): UserRepository {
 
     override suspend fun getProfile(uuid: String): Result<User> {
-        val userBaseInfo= supabaseClient.from("user")
+        val userBaseInfo = supabaseClient.from("user")
             .select {
                 filter {
                     eq("uuid", uuid)
@@ -22,17 +26,18 @@ class UserRepositoryImpl(
 
         return try {
             when (userBaseInfo?.isTeacher) {
-                true -> {
-                  Result.success(getStudentInfo(uuid))
-                }
                 false -> {
-                   Result.success(getTeacherInfo(uuid))
+                  Result.success(getStudentInfo(userBaseInfo.uuid))
+                }
+                true -> {
+                   Result.success(getTeacherInfo(userBaseInfo.uuid))
                 }
                 else -> {
                     Result.failure( NoSuchElementException("No user was found with uuid: $uuid") )
                 }
             }
         } catch (e: Exception){
+
             return Result.failure(e)
         }
 
@@ -40,7 +45,7 @@ class UserRepositoryImpl(
 
     override suspend fun editProfile(newUserData: User): Result<Unit> {
 
-        try {
+        return try {
             when(newUserData.isTeacher ) {
                 true -> {
                     supabaseClient.from("teacher")
@@ -68,8 +73,19 @@ class UserRepositoryImpl(
             Result.failure(e)
         }
 
-        return Result.failure(Exception("po"))
 
+    }
+
+    override suspend fun getMail(): Result<String> {
+        return try {
+            val result = supabaseClient.auth.currentUserOrNull()?.email
+            return if (result != null ) Result.success(result) else Result.failure(
+                AccessDeniedException("Not authorized")
+            )
+        }
+        catch(e: Exception) {
+            Result.failure(e)
+        }
     }
 
     private suspend fun getStudentInfo(uuid: String): User{
@@ -78,6 +94,7 @@ class UserRepositoryImpl(
                 eq("uuid", uuid)
             }
         }.decodeSingle<StudentDto>().toDomain()
+
     }
 
     private suspend fun getTeacherInfo(uuid: String): User{
@@ -102,10 +119,10 @@ class UserRepositoryImpl(
         )
     }
 
-    private fun StudentDto.toDomain():User {
+    private fun StudentDto.toDomain(): User {
         return User(
             uuid = uuid,
-            isTeacher = true,
+            isTeacher = false,
             personalCode = personalCode,
             surname = surname,
             name = name,
@@ -116,7 +133,7 @@ class UserRepositoryImpl(
         )
     }
 
-    private fun User.toStudentDto():StudentDto {
+    private fun User.toStudentDto(): StudentDto {
         return StudentDto(
             uuid = uuid,
             surname = surname,

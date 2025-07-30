@@ -24,6 +24,7 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.sdo_project.presentation.MainEvent
 import com.example.sdo_project.presentation.auth.components.AuthTextField
 import com.example.sdo_project.presentation.common.DesButton
 import com.example.sdo_project.ui.theme.SDOprojectTheme
@@ -31,11 +32,11 @@ import com.example.sdo_project.ui.theme.SDOprojectTheme
 @Composable
 fun AuthScreen(
     state: AuthState,
-    navigateToHome: () -> Unit,
-    event: ( AuthEvent ) -> Unit,
+    authEvent: ( AuthEvent ) -> Unit,
+    mainEvent: ( MainEvent ) -> Unit
 ) {
 
-    val result = handleAuthResult(state, navigateToHome)
+    val result = handleAuthResult(state, mainEvent)
     if (result) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -62,17 +63,20 @@ fun AuthScreen(
                     horizontalArrangement = Arrangement.spacedBy(10.dp)
                 ) {
                     DesButton(
-                        onClick = { event(AuthEvent.Login(email, password)) },
+                        onClick = { authEvent(AuthEvent.Login(email, password)) },
                         inText = "Login"
                     )
                     DesButton(
-                        onClick = { event(AuthEvent.Reset(email)) },
+                        onClick = { authEvent(AuthEvent.Reset(email)) },
                         inText = "Reset"
                     )
                 }
             }
 
         }
+    }
+    else {
+        CircularProgressIndicator()
     }
 
 
@@ -84,23 +88,23 @@ fun AuthScreen(
 fun AuthScreenPreview() {
     AuthScreen(
         state = AuthState.Idle,
-        navigateToHome = {},
-        event = {}
+        authEvent = {},
+        mainEvent = {}
     )
 }
 
-
-
 @Composable
-private fun handleAuthResult(state: AuthState, navigateToHome: () -> Unit): Boolean {
+private fun handleAuthResult(
+    state: AuthState,
+    mainEvent: ( MainEvent ) -> Unit ): Boolean
+{
     val context = LocalContext.current
     return when (state) {
         is AuthState.Authorized -> {
-            navigateToHome()
+            mainEvent(MainEvent.Recheck)
             false
         }
         is AuthState.Loading -> {
-            CircularProgressIndicator()
             false
         }
         is AuthState.Error -> {

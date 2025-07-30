@@ -1,4 +1,4 @@
-package com.example.sdo_project.domain.usecase
+package com.example.sdo_project.domain.usecase.auth
 
 import com.example.sdo_project.domain.repository.AuthRepository
 import jakarta.inject.Inject

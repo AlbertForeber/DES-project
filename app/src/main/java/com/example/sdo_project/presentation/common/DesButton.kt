@@ -9,11 +9,13 @@ import androidx.compose.ui.Modifier
 fun DesButton(
     inText: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    active: Boolean = true
 ) {
     Button(
         onClick = onClick,
-        modifier = modifier
+        modifier = modifier,
+        enabled = active
     ) {
         Text(inText)
     }
