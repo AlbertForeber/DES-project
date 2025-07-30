@@ -37,7 +37,7 @@ class SupabaseAuthRepositoryImpl @Inject constructor(
 
     override suspend fun getCurrentToken(): Result<String?> {
         return try {
-            Result.success(client.auth.currentAccessTokenOrNull())
+            Result.success(client.auth.currentUserOrNull()?.id)
         }
         catch( e: Exception ) {
             Result.failure(e)

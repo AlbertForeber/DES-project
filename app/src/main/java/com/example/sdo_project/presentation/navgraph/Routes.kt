@@ -4,7 +4,7 @@ sealed class Routes( val route: String ) {
     // navigations
     data object AuthNavigator: Routes("authNavigator")
     data object HomeNavigator: Routes("homeNavigator")
-    data object HomeNavigatorScreen: Routes("homeNavigator")
+    data object HomeNavigatorScreen: Routes("homeNavigatorScreen")
     // screens
     data object Login: Routes("login")
     data object Reset: Routes("reset")

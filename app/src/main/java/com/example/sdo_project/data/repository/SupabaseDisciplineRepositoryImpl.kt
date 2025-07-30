@@ -55,8 +55,8 @@ private fun DisciplineDto.toDomain(): Discipline {
         name = this.name,
         id = this.id,
         term = this.term,
-        departmentId = this.departmentId,
-        courseId = this.courseId,
-        instituteId = this.instituteId,
+        departmentName = this.departmentName,
+        courseName= this.courseId,
+        instituteName = this.instituteName,
     )
 }

@@ -1,5 +1,6 @@
 package com.example.sdo_project.data.repository
 
+import android.util.Log
 import com.example.sdo_project.data.remote.dto.StudentDto
 import com.example.sdo_project.data.remote.dto.TeacherDto
 import com.example.sdo_project.data.remote.dto.UserDto
@@ -23,10 +24,10 @@ class UserRepositoryImpl(
         return try {
             when (userBaseInfo?.isTeacher) {
                 true -> {
-                  Result.success(getStudentInfo(uuid))
+                  Result.success(getTeacherInfo(uuid))
                 }
                 false -> {
-                   Result.success(getTeacherInfo(uuid))
+                   Result.success(getStudentInfo(uuid))
                 }
                 else -> {
                     Result.failure( NoSuchElementException("No user was found with uuid: $uuid") )
@@ -105,7 +106,7 @@ class UserRepositoryImpl(
     private fun StudentDto.toDomain():User {
         return User(
             uuid = uuid,
-            isTeacher = true,
+            isTeacher = false,
             personalCode = personalCode,
             surname = surname,
             name = name,

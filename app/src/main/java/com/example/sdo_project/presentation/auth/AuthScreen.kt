@@ -21,7 +21,7 @@ fun AuthScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Butt
+        //Butt
     }
 }
 

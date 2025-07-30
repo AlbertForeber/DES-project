@@ -8,10 +8,10 @@ data class DisciplineDto(
     val id: Int,
     val name: String,
     val term: Int,
-    @SerialName("department_id")
-    val departmentId: Int,
-    @SerialName("course_id")
-    val courseId: Int,
-    @SerialName("institute_id")
-    val instituteId: Int
+    @SerialName("department_name")
+    val departmentName: String,
+    @SerialName("course_name")
+    val courseId: String,
+    @SerialName("institute_name")
+    val instituteName: String
 )
