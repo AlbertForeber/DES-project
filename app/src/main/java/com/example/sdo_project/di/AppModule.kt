@@ -1,30 +1,17 @@
 package com.example.sdo_project.di
 
 import com.example.sdo_project.BuildConfig
-import com.example.sdo_project.data.repository.GradesRepositoryImpl
 import com.example.sdo_project.data.repository.SupabaseAuthRepositoryImpl
 import com.example.sdo_project.data.repository.SupabaseDisciplineRepositoryImpl
-import com.example.sdo_project.data.repository.SupabaseGroupRepositoryImpl
-import com.example.sdo_project.data.repository.UserRepositoryImpl
 import com.example.sdo_project.domain.repository.AuthRepository
 import com.example.sdo_project.domain.repository.DisciplineRepository
-import com.example.sdo_project.domain.repository.GradesRepository
-import com.example.sdo_project.domain.repository.GroupRepository
-import com.example.sdo_project.domain.repository.UserRepository
-import com.example.sdo_project.domain.usecase.auth.AuthUseCases
-import com.example.sdo_project.domain.usecase.grade.ChangeGradeUseCase
-import com.example.sdo_project.domain.usecase.auth.ChangePasswordUseCase
-import com.example.sdo_project.domain.usecase.user.EditUserUseCase
-import com.example.sdo_project.domain.usecase.user.GetEmailUseCase
-import com.example.sdo_project.domain.usecase.grade.GetGradesWithStudentInfoUseCase
-import com.example.sdo_project.domain.usecase.group.GetGroupsOfTeacherUseCase
-import com.example.sdo_project.domain.usecase.grade.GetPointsByDisciplineIdUseCase
-import com.example.sdo_project.domain.usecase.user.GetTokenUseCase
-import com.example.sdo_project.domain.usecase.user.GetUserUseCase
-import com.example.sdo_project.domain.usecase.auth.LoginUseCase
-import com.example.sdo_project.domain.usecase.auth.LogoutUseCase
-import com.example.sdo_project.domain.usecase.auth.ResetUseCase
-import com.example.sdo_project.domain.usecase.auth.SignupUseCase
+import com.example.sdo_project.domain.usecase.AuthHomeUseCases
+import com.example.sdo_project.domain.usecase.AuthUseCases
+import com.example.sdo_project.domain.usecase.GetTokenUseCase
+import com.example.sdo_project.domain.usecase.LoginUseCase
+import com.example.sdo_project.domain.usecase.LogoutUseCase
+import com.example.sdo_project.domain.usecase.ResetUseCase
+import com.example.sdo_project.domain.usecase.SignupUseCase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -44,10 +31,7 @@ object AppModule {
         supabaseKey = BuildConfig.supabaseApi,
         supabaseUrl = BuildConfig.supabaseUrl,
     ) {
-        install(Auth) {
-            scheme = "project"
-            host = "des"
-        }
+        install(Auth)
         install(Postgrest)
     }
 
@@ -151,6 +135,54 @@ object AppModule {
         login = LoginUseCase( repo ),
         register = SignupUseCase( repo ),
         reset = ResetUseCase( repo )
+    )
+
+    @Provides
+    @Singleton
+    fun provideUserUseCase(
+        repo: UserRepository
+    ):GetUserUseCase = GetUserUseCase(repo)
+
+    @Provides
+    @Singleton
+    fun provideEditUserUseCase(
+        repo: UserRepository
+    ):EditUserUseCase = EditUserUseCase(repo)
+
+    @Provides
+    @Singleton
+    fun provideDisciplineUseCase(
+        repo: DisciplineRepository
+    ):GetDisciplinesUseCase = GetDisciplinesUseCase(repo)
+
+    @Provides
+    @Singleton
+    fun provideStudentsByGroupIdUseCase(
+        repo: GroupRepository
+    ):GetStudentsByGroupIdUseCase = GetStudentsByGroupIdUseCase(repo)
+
+    @Provides
+    @Singleton
+    fun provideGroupsByTeacherId(
+        repo: GroupRepository
+    ):GetGroupsOfTeacherUseCase = GetGroupsOfTeacherUseCase(repo)
+
+    @Provides
+    @Singleton
+    fun provideGroupById(
+        repo: GroupRepository
+    ):GetGroupByIdUseCase = GetGroupByIdUseCase(repo)
+
+    @Provides
+    @Singleton
+    fun provideGradeUseCase(
+        repo: GradesRepository
+    ):GradeUseCase = GradeUseCase(
+        editGradeByStudentPointId = EditGradeByStudentPointId(repo),
+        getGroupGradesByPointIdUseCase = GetGroupGradesByPointIdUseCase(repo),
+        getSectionGradesByStudentId = GetSectionGradesByStudentId(repo),
+        getSectionsGradesByStudentId = GetSectionsGradesByStudentId(repo)
+
     )
 
 

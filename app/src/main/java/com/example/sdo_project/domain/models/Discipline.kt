@@ -1,5 +1,9 @@
 package com.example.sdo_project.domain.models
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
+
+@Parcelize
 data class Discipline(
     val id: Int,
     val name: String,
@@ -7,4 +11,4 @@ data class Discipline(
     val departmentName: String,
     val courseName: String,
     val instituteName: String
-)
+) : Parcelable
