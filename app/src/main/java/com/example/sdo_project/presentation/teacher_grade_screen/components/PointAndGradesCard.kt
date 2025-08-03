@@ -1,6 +1,7 @@
 package com.example.sdo_project.presentation.teacher_grade_screen.components
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -49,6 +50,7 @@ fun PointAndGradesCard(
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .animateContentSize()
     ) {
         // Отдельный компонент
         Row(

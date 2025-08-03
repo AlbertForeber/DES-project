@@ -42,8 +42,8 @@ class TeacherGradeViewModel @Inject constructor(
                 is TeacherEvent.GetGroupsAndPoints -> {
                     withContext(Dispatchers.Main) {
                         _state.value = TeacherGradeState.Loading
-                        getGroupsAndPoints( event.teacherUuid, event.disciplineId )
                     }
+                    getGroupsAndPoints( event.teacherUuid, event.disciplineId )
 
                 }
             }
@@ -88,10 +88,14 @@ class TeacherGradeViewModel @Inject constructor(
                     newMap[point] = GradeListState.Loading
                 }
                 _listState.value = newMap
-                _state.value = TeacherGradeState.Idle(groups)
+                withContext(Dispatchers.Main) {
+                    _state.value = TeacherGradeState.Idle(groups)
+                }
             },
             onFailure = {
-                _state.value = TeacherGradeState.Error(errorMessage = it.message ?: "Unknown error")
+                withContext(Dispatchers.Main) {
+                    _state.value = TeacherGradeState.Error(errorMessage = it.message ?: "Unknown error")
+                }
             }
         )
     }
@@ -99,9 +103,7 @@ class TeacherGradeViewModel @Inject constructor(
     private suspend fun getGroupsAndPoints(teacherUuid: String, disciplineId: Int) {
         getGroupsUseCase(teacherUuid, disciplineId).fold(
             onSuccess = {
-                withContext(Dispatchers.Main) {
-                    getPoints(disciplineId, it)
-                }
+                getPoints(disciplineId, it)
             },
             onFailure = {
                 withContext(Dispatchers.Main) {
