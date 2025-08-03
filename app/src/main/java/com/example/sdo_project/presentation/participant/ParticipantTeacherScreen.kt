@@ -2,7 +2,6 @@ package com.example.sdo_project.presentation.participant
 
 import android.util.Log
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,11 +12,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Surface
@@ -35,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import com.example.sdo_project.domain.models.Discipline
 import com.example.sdo_project.domain.models.Group
 import com.example.sdo_project.domain.models.User
-import kotlin.math.exp
 
 @Composable
 fun ParticipantTeacherScreen(
@@ -105,19 +101,26 @@ fun ParticipantTeacherScreen(
                 .background(Color.Transparent)
                 .fillMaxWidth(), ) // for constraints SpacerHeight
 
+            LazyRow {
+                item{
+                    LazyColumn(
+                        verticalArrangement = Arrangement.spacedBy(10.dp)
+                    ) {
+                        item {
+                            ParticipantHeaderElement()
+                        }
 
-            LazyColumn(
-                verticalArrangement = Arrangement.spacedBy(10.dp)
-            ) {
-                items (participants.size){ index ->
-                    val participant = participants[index]
-
-                    ParticipantElement(
-                        participant = participant,
-                        group = group
-                    )
+                        items(participants.size){ index ->
+                            val participant = participants[index]
+                            ParticipantElement(
+                                participant = participant,
+                                group = group
+                            )
+                        }
+                    }
                 }
             }
+
         }
 
     }

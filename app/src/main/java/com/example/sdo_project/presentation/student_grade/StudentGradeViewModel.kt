@@ -7,6 +7,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.sdo_project.domain.models.GradePoint
 import com.example.sdo_project.domain.models.GradeSection
+import com.example.sdo_project.domain.models.User
 import com.example.sdo_project.domain.usecase.auth.AuthUseCases
 import com.example.sdo_project.domain.usecase.grade.GradeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -32,11 +33,11 @@ class StudentGradeViewModel @Inject constructor(
     val pointsGrades: State<Map<Int, List<GradePoint>?>> = _pointsGrades
 
 
-    fun onEvent( section: GradeSection ){
+    fun onEvent( section: GradeSection, user: User){
 
         viewModelScope.launch(Dispatchers.IO) {
-            authUseCases.getToken().onSuccess { uuid ->
-                gradeUseCase.getSectionGradesByStudentId(studentUuid = uuid!!, sectionId = section.id).onSuccess { list ->
+
+                gradeUseCase.getSectionGradesByStudentId(studentUuid = user.uuid, sectionId = section.id).onSuccess { list ->
 
                     withContext(Dispatchers.Main){
 
@@ -51,20 +52,17 @@ class StudentGradeViewModel @Inject constructor(
                     Log.d("SUPABASE_DB_LOGS", "StudentGradeViewModel list  onEvent: ${error.message}")
                 }
 
-            }.onFailure { error ->
-                Log.d("SUPABASE_DB_LOGS", "StudentGradeViewModel uuid onEvent : ${error.message}")
 
-            }
         }
 
     }
 
-    fun onLoading(disciplineId : Int){
+    fun onLoading(disciplineId : Int, user: User){
         _state.value = StudentGradeState.Loading
         viewModelScope.launch(Dispatchers.IO) {
-            authUseCases.getToken().onSuccess { uuid ->
 
-                gradeUseCase.getSectionsGradesByStudentId(studentUuid = uuid!!, disciplineId = disciplineId).onSuccess { list ->
+
+                gradeUseCase.getSectionsGradesByStudentId(studentUuid = user.uuid, disciplineId = disciplineId).onSuccess { list ->
                     withContext(Dispatchers.Main){
                         _state.value = StudentGradeState.Success(sectionGradeList = list)
                         _pointsGrades.value = createMapWithNoValues(list)
@@ -75,9 +73,7 @@ class StudentGradeViewModel @Inject constructor(
                     Log.d("SUPABASE_DB_LOGS", "StudentGradeViewModel list onLoading: ${error.message}")
                 }
 
-            }.onFailure { error ->
-                Log.d("SUPABASE_DB_LOGS", "StudentGradeViewModel uuid onLoading : ${error.message}")
-            }
+
         }
 
 

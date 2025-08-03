@@ -1,7 +1,6 @@
 package com.example.sdo_project.data.repository
 
 import android.util.Log
-import com.example.sdo_project.data.remote.dto.GradeDto
 import com.example.sdo_project.data.remote.dto.GradePointDto
 import com.example.sdo_project.data.remote.dto.GradeSectionDto
 import com.example.sdo_project.data.remote.dto.GradeTeacherPointDto

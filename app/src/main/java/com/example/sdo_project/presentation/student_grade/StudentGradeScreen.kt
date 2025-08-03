@@ -18,6 +18,8 @@ import androidx.compose.ui.unit.dp
 import com.example.sdo_project.domain.models.Discipline
 import com.example.sdo_project.domain.models.GradePoint
 import com.example.sdo_project.domain.models.GradeSection
+import com.example.sdo_project.domain.models.User
+import com.example.sdo_project.presentation.MainState
 import com.example.sdo_project.presentation.student_grade.components.GradeSectionDetailedPart
 import com.example.sdo_project.presentation.student_grade.components.GradeSectionPart
 import com.example.sdo_project.presentation.student_grade.components.GradeSectionPartShimmer
@@ -26,14 +28,18 @@ import com.example.sdo_project.presentation.student_grade.components.GradeSectio
 fun StudentGradeScreen(
     modifier: Modifier = Modifier,
     discipline: Discipline,
-    onLoading: (Int )-> Unit,
-    onEvent: (GradeSection) -> Unit,
+    onLoading: (Int, User)-> Unit,
+    onEvent: (GradeSection, User) -> Unit,
     state: StudentGradeState,
-    pointsGrades: Map<Int, List<GradePoint>?>
+    pointsGrades: Map<Int, List<GradePoint>?>,
+    mainState: MainState
 ) {
 
     LaunchedEffect (Unit){
-        onLoading( discipline.id )
+        if (mainState is MainState.Authorized){
+            onLoading( discipline.id, mainState.user )
+        }
+
     }
 
     Column (
@@ -60,7 +66,8 @@ fun StudentGradeScreen(
             GradeSectionDetailedPart(
                 pointsGrades = pointsGrades,
                 sectionsWithGrade = state.sectionGradeList,
-                onClick = onEvent
+                onClick = onEvent,
+                mainState = mainState
             )
 
         }

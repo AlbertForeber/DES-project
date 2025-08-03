@@ -21,13 +21,16 @@ import androidx.compose.ui.unit.dp
 import com.example.sdo_project.R
 import com.example.sdo_project.domain.models.GradePoint
 import com.example.sdo_project.domain.models.GradeSection
+import com.example.sdo_project.domain.models.User
+import com.example.sdo_project.presentation.MainState
 
 
 @Composable
 fun GradeSectionDetailedPart(
     pointsGrades: Map<Int, List<GradePoint>?>,
     sectionsWithGrade: List<GradeSection>,
-    onClick: (GradeSection) -> Unit
+    onClick: (GradeSection, User) -> Unit,
+    mainState: MainState
 ) {
 
     LazyColumn(
@@ -41,7 +44,8 @@ fun GradeSectionDetailedPart(
         GradeSectionDetailedComponent(
             section = curSection,
             pointsGrades = pointsGrades,
-            onClick = onClick
+            onClick = onClick,
+            mainState = mainState
         )
 
 

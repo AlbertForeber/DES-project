@@ -2,8 +2,10 @@ package com.example.sdo_project.presentation.participant
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
@@ -20,14 +22,13 @@ fun ParticipantElement(
     participant: User,
     group: Group?
 ) {
-    val scrollState = rememberLazyListState()
-    LazyRow (
 
-        state = scrollState,
-        modifier = Modifier.width(800.dp),
-        horizontalArrangement = Arrangement.SpaceBetween
+    Row (
+
+        modifier = Modifier.wrapContentSize(),
+        horizontalArrangement = Arrangement.spacedBy(20.dp)
     ) {
-        item {
+
             Box(
                 modifier = Modifier.width(140.dp)
             ){
@@ -36,36 +37,24 @@ fun ParticipantElement(
                     maxLines = 3)
             }
 
-        }
 
-        item {
             Box(modifier = Modifier.width(70.dp)){
                 Text(text = participant.personalCode)
             }
 
-        }
 
-        item {
             Box(
                 modifier = Modifier.width(70.dp)
             ){
                 Text(text = "Студент")
             }
 
-        }
 
-        item {
             Box(
                 modifier = Modifier.width(120.dp)
             ){
                 Text(text = group?.name ?: "-")
             }
-
-        }
-
-
-
-
 
 
     }

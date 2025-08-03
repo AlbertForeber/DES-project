@@ -29,12 +29,15 @@ import androidx.compose.ui.zIndex
 import com.example.sdo_project.R
 import com.example.sdo_project.domain.models.GradePoint
 import com.example.sdo_project.domain.models.GradeSection
+import com.example.sdo_project.domain.models.User
+import com.example.sdo_project.presentation.MainState
 
 @Composable
 fun GradeSectionDetailedComponent (
     section: GradeSection,
-    onClick: (GradeSection) -> Unit,
+    onClick: (GradeSection, User) -> Unit,
     pointsGrades: Map<Int, List<GradePoint>?>,
+    mainState: MainState
 ){
 
     var isDetailed by remember { mutableStateOf<Boolean>(false) }
@@ -57,7 +60,8 @@ fun GradeSectionDetailedComponent (
 
             IconButton(
                 onClick = {
-                    if ( pointsGrades[section.id] == null ) onClick(section)
+                    val mainState_ = mainState as MainState.Authorized
+                    if ( pointsGrades[section.id] == null ) onClick(section, mainState_.user)
 
                     isDetailed = !isDetailed
                 }
