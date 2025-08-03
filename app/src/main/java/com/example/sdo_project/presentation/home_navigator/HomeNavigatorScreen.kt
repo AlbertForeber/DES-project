@@ -110,32 +110,32 @@ fun HomeNavigatorScreen(
 
             navController.previousBackStackEntry?.savedStateHandle?.get<Discipline>("discipline")
                 ?.let{ discipline ->
-                    DisciplineScreen(
-                        mainState = mainState,
-
-                        navigateToGrade =  {
-                            if (user_.user.isTeacher){
-                                navigateToTeacherGradeScreen(
-                                    navController = navController,
-                                    discipline = discipline
-                                )
-                            } else {
-                                navigateToStudentGradeScreen(
-                                    navController = navController,
-                                    discipline = discipline
-                                )
-                            }
-                        },
-
-                        discipline = discipline,
-
-                        navigateToParticipants = {
-                            navigateToParticipantsScreen(
-                                navController = navController,
-                                discipline = discipline
-                            )
-                        }
-                    )
+//                    DisciplineScreen(
+//                        mainState = mainState,
+//
+//                        navigateToGrade =  {
+//                            if (user_.user.isTeacher){
+//                                navigateToTeacherGradeScreen(
+//                                    navController = navController,
+//                                    discipline = discipline
+//                                )
+//                            } else {
+//                                navigateToStudentGradeScreen(
+//                                    navController = navController,
+//                                    discipline = discipline
+//                                )
+//                            }
+//                        },
+//
+//                        discipline = discipline,
+//
+//                        navigateToParticipants = {
+//                            navigateToParticipantsScreen(
+//                                navController = navController,
+//                                discipline = discipline
+//                            )
+//                        }
+//                    )
                 }
 
         }
