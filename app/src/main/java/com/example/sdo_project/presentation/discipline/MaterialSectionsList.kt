@@ -1,0 +1,51 @@
+package com.example.sdo_project.presentation.discipline
+
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import com.example.sdo_project.domain.models.Discipline
+import com.example.sdo_project.domain.models.MaterialSection
+
+@Composable
+fun MaterialSectionsList (
+    sections: List<MaterialSection>,
+    onClick: (Int, Int?) -> Unit,
+    discipline:Discipline
+){
+
+    LazyColumn(
+        modifier = Modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(10.dp)
+    ) {
+        items(sections.size) { index ->
+            val section = sections[index]
+
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(150.dp)
+                    .border(1.dp, Color.Black, RoundedCornerShape(20.dp))
+                    .clickable {
+                        onClick(discipline.id, null)
+                    },
+                contentAlignment = Alignment.CenterStart
+            ){
+                Text(text = section.name)
+
+            }
+
+        }
+    }
+
+}

@@ -2,6 +2,7 @@ package com.example.sdo_project.di
 
 import com.example.sdo_project.BuildConfig
 import com.example.sdo_project.data.repository.GradesRepositoryImpl
+import com.example.sdo_project.data.repository.MaterialRepositoryImpl
 import com.example.sdo_project.data.repository.SupabaseAuthRepositoryImpl
 import com.example.sdo_project.data.repository.SupabaseDisciplineRepositoryImpl
 import com.example.sdo_project.data.repository.SupabaseGroupRepositoryImpl
@@ -10,6 +11,7 @@ import com.example.sdo_project.domain.repository.AuthRepository
 import com.example.sdo_project.domain.repository.DisciplineRepository
 import com.example.sdo_project.domain.repository.GradesRepository
 import com.example.sdo_project.domain.repository.GroupRepository
+import com.example.sdo_project.domain.repository.MaterialRepository
 import com.example.sdo_project.domain.repository.UserRepository
 import com.example.sdo_project.domain.usecase.GetDisciplinesUseCase
 import com.example.sdo_project.domain.usecase.auth.AuthUseCases
@@ -29,6 +31,7 @@ import com.example.sdo_project.domain.usecase.grade.GradeUseCase
 import com.example.sdo_project.domain.usecase.group.GetGroupByIdUseCase
 import com.example.sdo_project.domain.usecase.group.GetGroupsOfTeacherUseCase
 import com.example.sdo_project.domain.usecase.group.GetStudentsByGroupIdUseCase
+import com.example.sdo_project.domain.usecase.material.GetMaterialSectionsUseCase
 import com.example.sdo_project.domain.usecase.user.EditUserUseCase
 import com.example.sdo_project.domain.usecase.user.GetEmailUseCase
 import com.example.sdo_project.domain.usecase.user.GetTokenUseCase
@@ -85,6 +88,12 @@ object AppModule {
     fun provideUserRepository(
         client: SupabaseClient
     ): UserRepository = UserRepositoryImpl(client)
+
+    @Provides
+    @Singleton
+    fun provideMaterialRepository(
+        client: SupabaseClient
+    ): MaterialRepository = MaterialRepositoryImpl(client)
 
 
     @Provides
@@ -190,6 +199,12 @@ object AppModule {
         getSectionsGradesByStudentId = GetSectionsGradesByStudentId(repo)
 
     )
+
+    @Provides
+    @Singleton
+    fun provideGetMaterialSections (
+        repo: MaterialRepository
+    ): GetMaterialSectionsUseCase = GetMaterialSectionsUseCase(repo)
 
 
 }
