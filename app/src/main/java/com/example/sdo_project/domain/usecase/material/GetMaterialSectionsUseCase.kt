@@ -7,7 +7,11 @@ import javax.inject.Inject
 class GetMaterialSectionsUseCase @Inject constructor(
     private val materialRepository: MaterialRepository
 ) {
-    suspend operator fun invoke(disciplineId: Int, parentId: Int? = null): Result<List<MaterialSection>>{
-       return  materialRepository.getMaterialSections(disciplineId = disciplineId, parentId =  parentId)
+    suspend operator fun invoke(disciplineId: Int): Result<List<MaterialSection>>{
+       return  materialRepository.getMaterialSections(disciplineId = disciplineId)
+    }
+
+    suspend operator fun invoke(parent: MaterialSection): Result<List<MaterialSection>>{
+        return  materialRepository.getMaterialSections(parent = parent)
     }
 }

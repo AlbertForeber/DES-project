@@ -42,36 +42,40 @@ class MaterialRepositoryImpl(
         }
     }
 
-    override suspend fun getMaterialSections(disciplineId: Int, parentId: Int?): Result<List<MaterialSection>> {
-        try {
-            if (parentId != null) {
-                val result = client.from("material_section")
-                    .select {
-                        filter {
-                            eq ("discipline_id", disciplineId)
-                            eq("parent_id", parentId)
+    override suspend fun getMaterialSections(disciplineId: Int): Result<List<MaterialSection>> {
+        return try {
+            val result = client.postgrest.rpc(
+                "get_main_material_sections",
+                buildJsonObject {
+                    put("discipline_id_param", disciplineId)
 
+                }
+            ).decodeList<MaterialSectionDto>().map { it.toDomain() }
 
-                        }
-                    }.decodeList<MaterialSectionDto>().map { it.toDomain() }
-                return Result.success(result)
-
-            } else {
-                val result = client.postgrest.rpc("get_main_material_sections",
-                    buildJsonObject {
-                        put("discipline_id_param", disciplineId)
-
-                    }
-                ).decodeList<MaterialSectionDto>().map { it.toDomain() }
-
-                return Result.success(result)
-            }
-
+            Result.success(result)
         }
         catch (e: Exception) {
-            return Result.failure(e)
+            Result.failure(e)
         }
     }
+
+    override suspend fun getMaterialSections(parent: MaterialSection): Result<List<MaterialSection>> {
+        return try {
+            val result = client.from("material_section")
+                .select {
+                    filter {
+                        eq("parent_id", parent.id)
+
+
+                    }
+                }.decodeList<MaterialSectionDto>().map { it.toDomain() }
+            Result.success(result)
+        }
+        catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
 
     @OptIn(ExperimentalTime::class)
     private fun MaterialDto.toDomain(): Material{
