@@ -4,32 +4,22 @@ import android.os.Bundle
 import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.lifecycleScope
 import com.example.sdo_project.data.repository.GradesRepositoryImpl
 import com.example.sdo_project.data.repository.SupabaseAuthRepositoryImpl
 import com.example.sdo_project.data.repository.SupabaseDisciplineRepositoryImpl
 import com.example.sdo_project.data.repository.SupabaseGroupRepositoryImpl
+import com.example.sdo_project.domain.models.MaterialSection
 import com.example.sdo_project.domain.models.User
 import com.example.sdo_project.presentation.MainState
 import com.example.sdo_project.presentation.MainViewModel
-import com.example.sdo_project.presentation.auth.AuthViewModel
-import com.example.sdo_project.presentation.navgraph.NavGraph
-import com.example.sdo_project.presentation.teacher_grade_screen.TeacherEvent
+import com.example.sdo_project.presentation.material_section.MaterialSectionScreen
+import com.example.sdo_project.presentation.material_section.MaterialViewModel
 import com.example.sdo_project.presentation.teacher_grade_screen.TeacherGradeScreen
-import com.example.sdo_project.presentation.teacher_grade_screen.TeacherGradeState
 import com.example.sdo_project.presentation.teacher_grade_screen.TeacherGradeViewModel
 import com.example.sdo_project.ui.theme.SDOprojectTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -39,8 +29,6 @@ import io.github.jan.supabase.auth.auth
 import io.github.jan.supabase.auth.handleDeeplinks
 import io.github.jan.supabase.auth.providers.builtin.Email
 import jakarta.inject.Inject
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 
 @AndroidEntryPoint
@@ -106,13 +94,13 @@ class MainActivity : ComponentActivity() {
                 //
 
 
-//                LaunchedEffect(Unit) {
-//                    client.auth.signInWith(Email) {
-//                        email = "kate@mail.ru"
-//                        password = "123123"
-//                    }
-//                }
-//
+                LaunchedEffect(Unit) {
+                    client.auth.signInWith(Email) {
+                        email = "kate@mail.ru"
+                        password = "123123"
+                    }
+                }
+
 //                val techVM: TeacherGradeViewModel = hiltViewModel()
 //                val state = techVM.state.collectAsState()
 //                val listState = techVM.listState.collectAsState()
@@ -122,22 +110,36 @@ class MainActivity : ComponentActivity() {
 //                    disciplineId = 2,
 //                    mainState = MainState.Authorized(
 //                        user = User(
-//                                uuid = "830fac75-cb1b-426d-8f5d-c5780edde532",
-//                                isTeacher = true,
-//                                personalCode = "fashfash",
-//                                surname = "1234",
-//                                name = "12342",
-//                                patronymic = "1234213",
-//                                departmentId = 1,
-//                                country = "12341234",
-//                                city = "12341234",
-//                            )
+//                            uuid = "830fac75-cb1b-426d-8f5d-c5780edde532",
+//                            isTeacher = true,
+//                            personalCode = "fashfash",
+//                            surname = "1234",
+//                            name = "12342",
+//                            patronymic = "1234213",
+//                            departmentId = 1,
+//                            country = "12341234",
+//                            city = "12341234",
+//                        )
 //                    ),
 //                    teacherGradeState = state.value,
 //                    pointListState = listState.value
 //                )
 
-                NavGraph(viewModel)
+                val matSecViewModel: MaterialViewModel = hiltViewModel()
+                val state = matSecViewModel.state.collectAsState()
+                val backStack = matSecViewModel.backStack
+                MaterialSectionScreen(
+                    initialParent = MaterialSection(
+                        id = 6,
+                        name = "NestedFolder",
+                        parentId = 3,
+                        disciplineId = 2
+                    ),
+                    event = matSecViewModel::onEvent,
+                    state = state.value,
+                    backStack = backStack
+                ) {}
+                //NavGraph(viewModel)
             }
         }
     }

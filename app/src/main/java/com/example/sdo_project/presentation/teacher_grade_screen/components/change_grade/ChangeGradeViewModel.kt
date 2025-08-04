@@ -19,30 +19,45 @@ class ChangeGradeViewModel @Inject constructor(
     private val _state = MutableStateFlow<ChangeGradeState>(ChangeGradeState.Idle)
     val state = _state.asStateFlow()
 
-    fun changeGrade(newGrade: Float, pointId: Int, uuid: String) {
+    fun onEvent(event: ChangeGradeEvent) {
         viewModelScope.launch(Dispatchers.IO) {
-            withContext(Dispatchers.Main) {
-                _state.value = ChangeGradeState.Loading
-            }
-            changeGradeUseCase(
-                uuid = uuid,
-                pointId = pointId,
-                score = newGrade
-            ).fold(
-                onSuccess = {
+            when (event) {
+                ChangeGradeEvent.BackToIdle -> {
                     withContext(Dispatchers.Main) {
-                        _state.value = ChangeGradeState.Success
                         delay(100)
                         _state.value = ChangeGradeState.Idle
                     }
-
-                },
-                onFailure = {
-                    withContext(Dispatchers.Main) {
-                        _state.value = ChangeGradeState.Error( it.message ?: "Unknown error" )
-                    }
                 }
-            )
+                is ChangeGradeEvent.ChangeGrade -> changeGrade(
+                    event.newGrade,
+                    event.pointId,
+                    event.uuid
+                )
+            }
+
         }
+    }
+
+    private suspend fun changeGrade(newGrade: Float, pointId: Int, uuid: String) {
+        withContext(Dispatchers.Main) {
+            _state.value = ChangeGradeState.Loading
+        }
+        changeGradeUseCase(
+            uuid = uuid,
+            pointId = pointId,
+            score = newGrade
+        ).fold(
+            onSuccess = {
+                withContext(Dispatchers.Main) {
+                    _state.value = ChangeGradeState.Success
+                }
+
+            },
+            onFailure = {
+                withContext(Dispatchers.Main) {
+                    _state.value = ChangeGradeState.Error( it.message ?: "Unknown error" )
+                }
+            }
+        )
     }
 }

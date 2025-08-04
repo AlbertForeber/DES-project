@@ -7,6 +7,8 @@ import com.example.sdo_project.domain.models.Material
 import com.example.sdo_project.domain.models.MaterialSection
 import com.example.sdo_project.domain.repository.MaterialRepository
 import io.github.jan.supabase.SupabaseClient
+import io.github.jan.supabase.exceptions.RestException
+import io.github.jan.supabase.postgrest.exception.PostgrestRestException
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
 import kotlinx.serialization.json.buildJsonObject
@@ -37,7 +39,11 @@ class MaterialRepositoryImpl(
         try {
             client.from("material").insert(material.toData())
             return Result.success(Unit)
-        }catch (e: Exception){
+        }
+        catch (e: PostgrestRestException){
+            return  Result.failure(e)
+        }
+        catch (e: Exception){
            return  Result.failure(e)
         }
     }

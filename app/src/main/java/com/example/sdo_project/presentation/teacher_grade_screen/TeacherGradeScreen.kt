@@ -21,6 +21,9 @@ import com.example.sdo_project.domain.models.GradeTeacherPoint
 import com.example.sdo_project.domain.models.Group
 import com.example.sdo_project.domain.models.User
 import com.example.sdo_project.presentation.MainState
+import com.example.sdo_project.presentation.common.LoadingElement
+import com.example.sdo_project.presentation.common.error_screen.ErrorScreen
+import com.example.sdo_project.presentation.common.error_screen.SizeParameter
 import com.example.sdo_project.presentation.teacher_grade_screen.components.GradeDropDown
 import com.example.sdo_project.presentation.teacher_grade_screen.components.GradeTextField
 import com.example.sdo_project.presentation.teacher_grade_screen.components.PointAndGradesCard
@@ -35,12 +38,7 @@ fun TeacherGradeScreen(
     pointListState: Map<GradeTeacherPoint, GradeListState>
 ) {
     LaunchedEffect(Unit) {
-        event(
-            TeacherEvent.GetGroupsAndPoints(
-                teacherUuid = (mainState as MainState.Authorized).user.uuid,
-                disciplineId = disciplineId
-            )
-        )
+        retryEvent(event, mainState, disciplineId)
     }
     //
     var dropDownExpanded by remember { mutableStateOf(false) }
@@ -49,7 +47,14 @@ fun TeacherGradeScreen(
     //
     when (teacherGradeState) {
         is TeacherGradeState.Error -> {
-            ErrorScreen()
+            ErrorScreen(
+                error = teacherGradeState.errorMessage,
+                sizeParameter = SizeParameter.LargeSize,
+                retryButtonEnabled = true,
+                retryButton = {
+                    retryEvent(event, mainState, disciplineId)
+                }
+            )
         }
         is TeacherGradeState.Idle -> {
             LazyColumn(
@@ -92,11 +97,19 @@ fun TeacherGradeScreen(
             }
         }
         TeacherGradeState.Loading -> {
-            CircularProgressIndicator()
+            LoadingElement(modifier = Modifier.fillMaxSize())
         }
     }
 }
 
+private fun retryEvent( event: ( TeacherEvent ) -> Unit, mainState: MainState, disciplineId: Int,) {
+    event(
+        TeacherEvent.GetGroupsAndPoints(
+            teacherUuid = (mainState as MainState.Authorized).user.uuid,
+            disciplineId = disciplineId
+        )
+    )
+}
 
 @Preview(showBackground = true)
 @Composable
@@ -129,11 +142,6 @@ fun PreviewTeacherGradeScreen() {
             maxScore = 20f
         ) to GradeListState.Loading)
     )
-}
-
-@Composable
-fun ErrorScreen() {
-    TODO("Not yet implemented")
 }
 
 

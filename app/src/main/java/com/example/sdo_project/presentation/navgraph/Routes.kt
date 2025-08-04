@@ -10,6 +10,7 @@ sealed class Routes( val route: String ) {
     data object Reset: Routes("reset")
     data object Home: Routes("home")
     data object Discipline: Routes("discipline")
+    data object MaterialSection: Routes("materialSection")
     data object StudentGrade: Routes("studentGrade")
     data object TeacherGrade: Routes("teacherGrade")
     data object Participant: Routes("participant")

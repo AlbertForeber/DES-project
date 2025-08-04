@@ -14,12 +14,13 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.sdo_project.domain.models.Discipline
-import com.example.sdo_project.domain.models.User
+import com.example.sdo_project.domain.models.MaterialSection
 import com.example.sdo_project.presentation.MainEvent
 import com.example.sdo_project.presentation.MainState
-import com.example.sdo_project.presentation.discipline.DisciplineScreen
 import com.example.sdo_project.presentation.home.HomeScreen
 import com.example.sdo_project.presentation.home.HomeViewModel
+import com.example.sdo_project.presentation.material_section.MaterialSectionScreen
+import com.example.sdo_project.presentation.material_section.MaterialViewModel
 import com.example.sdo_project.presentation.navgraph.Routes
 import com.example.sdo_project.presentation.participant.ParticipantScreen
 import com.example.sdo_project.presentation.participant.ParticipantViewModel
@@ -27,6 +28,8 @@ import com.example.sdo_project.presentation.profile.ProfileScreen
 import com.example.sdo_project.presentation.profile.ProfileViewModel
 import com.example.sdo_project.presentation.student_grade.StudentGradeScreen
 import com.example.sdo_project.presentation.student_grade.StudentGradeViewModel
+import com.example.sdo_project.presentation.teacher_grade_screen.TeacherGradeScreen
+import com.example.sdo_project.presentation.teacher_grade_screen.TeacherGradeViewModel
 
 
 @Composable
@@ -178,10 +181,43 @@ fun HomeNavigatorScreen(
         }
 
         composable(Routes.TeacherGrade.route) {
+            navController.previousBackStackEntry?.savedStateHandle?.get<Discipline>("discipline")?.let { discipline ->
+                val viewModel: TeacherGradeViewModel = hiltViewModel()
+                val state = viewModel.state.collectAsState()
+                val listState = viewModel.listState.collectAsState()
+                TeacherGradeScreen(
+                    event = viewModel::onEvent,
+                    disciplineId = discipline.id,
+                    mainState = mainState,
+                    teacherGradeState = state.value,
+                    pointListState = listState.value
+                )
+            }
+        }
+
+        composable(Routes.MaterialSection.route) {
+            navController.previousBackStackEntry
+                ?.savedStateHandle?.get<MaterialSection>("materialSection")?.let { section ->
+                    val viewModel: MaterialViewModel = hiltViewModel()
+                    val state = viewModel.state.collectAsState()
+                    val backStack = viewModel.backStack
+                    MaterialSectionScreen(
+                        section,
+                        event = viewModel::onEvent,
+                        state = state.value,
+                        backStack = backStack
+                    ) {
+                        navController.navigateUp()
+                    }
+            }
         }
     }
 }
 
+private fun navigateToMaterialSection( navController: NavHostController, initParent: MaterialSection ) {
+    navController.currentBackStackEntry?.savedStateHandle?.set("materialSection", initParent)
+    navController.navigate(Routes.MaterialSection.route)
+}
 
 private fun navigateToDetails( navController: NavHostController, discipline: Discipline ){
     navController.currentBackStackEntry?.savedStateHandle?.set("discipline", discipline)

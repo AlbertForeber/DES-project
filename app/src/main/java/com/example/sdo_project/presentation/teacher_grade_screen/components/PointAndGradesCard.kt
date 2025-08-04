@@ -18,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,10 +30,12 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.max
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.example.sdo_project.domain.models.GradeTeacherPoint
 import com.example.sdo_project.domain.models.GradeWithStudentInfo
 import com.example.sdo_project.presentation.teacher_grade_screen.TeacherEvent
 import com.example.sdo_project.presentation.teacher_grade_screen.components.change_grade.ChangeGradeDialog
+import com.example.sdo_project.presentation.teacher_grade_screen.components.change_grade.ChangeGradeViewModel
 import com.example.sdo_project.presentation.teacher_grade_screen.components.grade_list.GradeListState
 
 @Composable
@@ -135,13 +138,17 @@ fun GradeElement(info: GradeWithStudentInfo, point: GradeTeacherPoint) {
         )
     }
     if ( dialog ) {
+        val viewModel: ChangeGradeViewModel = hiltViewModel()
+        val state = viewModel.state.collectAsState()
         ChangeGradeDialog(
             onDismissRequest = { dialog = false },
             onSuccess = { gradeText = it.toString() },
             maxGrade = point.maxScore,
             oldGrade = gradeText.toFloat(),
             pointId = point.id,
-            uuid = info.uuid
+            uuid = info.uuid,
+            state = state.value,
+            event = viewModel::onEvent,
         )
     }
 

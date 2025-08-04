@@ -32,6 +32,7 @@ import com.example.sdo_project.domain.usecase.group.GetGroupByIdUseCase
 import com.example.sdo_project.domain.usecase.group.GetGroupsOfTeacherUseCase
 import com.example.sdo_project.domain.usecase.group.GetStudentsByGroupIdUseCase
 import com.example.sdo_project.domain.usecase.material.GetMaterialSectionsUseCase
+import com.example.sdo_project.domain.usecase.material.GetMaterialsUseCase
 import com.example.sdo_project.domain.usecase.user.EditUserUseCase
 import com.example.sdo_project.domain.usecase.user.GetEmailUseCase
 import com.example.sdo_project.domain.usecase.user.GetTokenUseCase
@@ -205,6 +206,12 @@ object AppModule {
     fun provideGetMaterialSections (
         repo: MaterialRepository
     ): GetMaterialSectionsUseCase = GetMaterialSectionsUseCase(repo)
+
+    @Provides
+    @Singleton
+    fun provideGetMaterials (
+        repo: MaterialRepository
+    ): GetMaterialsUseCase = GetMaterialsUseCase(repo)
 
 
 }
