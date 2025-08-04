@@ -35,6 +35,7 @@ class HomeViewModel @Inject constructor(
                  }
 
              }.onFailure { error ->
+                 _user_loaded.value = HomeStates.Error(error.message ?: "Uknown error")
                  Log.d("SUPABASE_DB_LOGS", "HomeViewModele discipline: ${error.message}")
              }
 

@@ -34,6 +34,7 @@ class DisciplineViewModel @Inject constructor(
                 }
             }
             .onFailure { error ->
+                _state.value = DisciplineState.Error(message = error.message ?: "Unknown error")
                 Log.d("SUPABASE_DB_LOGS", "DisciplineViewModel list onLoading: ${error.message}")
 
             }

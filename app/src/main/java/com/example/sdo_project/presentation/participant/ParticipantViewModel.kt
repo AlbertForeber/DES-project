@@ -28,8 +28,11 @@ class ParticipantViewModel @Inject constructor(
     val groups: State<ParticipantState> = _groups
 
     // participants of chosen by teacher-user group / students of student-user`s group
-    private val _participants = mutableStateOf<List<User>>(emptyList())
-    val participants: State<List<User>> = _participants
+//    private val _participants = mutableStateOf<List<User>>(emptyList())
+//    val participants: State<List<User>> = _participants
+
+    private val _participants = mutableStateOf<ParticipantStudentListState>(ParticipantStudentListState.Start)
+    val participants: State<ParticipantStudentListState> = _participants
 
     private val _chosen_group = mutableStateOf<Group?>(null)
     val chosen_group : State<Group?> = _chosen_group
@@ -44,6 +47,7 @@ class ParticipantViewModel @Inject constructor(
                 }
 
             }.onFailure { error ->
+                _groups.value = ParticipantState.Error(message = error.message ?: "Unknown error")
                 Log.d("SUPABASE_DB_LOGS", "ParticipantViewModele list getGroupByTeacherId: ${error.message}")
 
             }
@@ -57,17 +61,22 @@ class ParticipantViewModel @Inject constructor(
                 getGroupByIdUseCase(groupId = groupId).onSuccess { group ->
 
                         withContext(Dispatchers.Main){
-                            _participants.value = list
+                            //_participants.value = list
+                            _participants.value = ParticipantStudentListState.Success(participants = list)
                             _chosen_group.value = group
                         }
 
                 }.onFailure { error ->
+                    // maybe make another error so that Toastb will be another
+                    _participants.value = ParticipantStudentListState.Error(message = error.message ?: "Unknown error")
                     Log.d("SUPABASE_DB_LOGS", "ParticipantViewModele group getStudentsByGroupId: ${error.message}")
                 }
 
 
 
             }.onFailure { error ->
+                // maybe make another error so that Toastb will be another
+                _participants.value = ParticipantStudentListState.Error(message = error.message ?: "Unknown error")
                 Log.d("SUPABASE_DB_LOGS", "ParticipantViewModele list getStudentsByGroupId: ${error.message}")
             }
 

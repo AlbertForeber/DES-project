@@ -7,5 +7,6 @@ sealed class HomeStates {
     object EmptyStart : HomeStates()
     object Loading: HomeStates()
     data class HomeSuccessState (val user: User, val disciplines: List<Discipline>): HomeStates()
+    data class Error (val message: String) : HomeStates()
 
 }

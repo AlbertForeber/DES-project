@@ -14,10 +14,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.sdo_project.domain.models.Discipline
+import com.example.sdo_project.domain.models.MaterialSection
 import com.example.sdo_project.domain.models.User
 import com.example.sdo_project.presentation.MainEvent
 import com.example.sdo_project.presentation.MainState
 import com.example.sdo_project.presentation.discipline.DisciplineScreen
+import com.example.sdo_project.presentation.discipline.DisciplineViewModel
 import com.example.sdo_project.presentation.home.HomeScreen
 import com.example.sdo_project.presentation.home.HomeViewModel
 import com.example.sdo_project.presentation.navgraph.Routes
@@ -98,7 +100,7 @@ fun HomeNavigatorScreen(
                         group = chosen_group,
                         getStudentsByGroupId = participantViewModel::getStudentsByGroupId,
                         getGroupsByTeacherUuid = participantViewModel::getGroupsByTeacherId,
-                        participants = participants,
+                        participantsState = participants,
                         discipline = discipline
                     )
                 }
@@ -107,35 +109,44 @@ fun HomeNavigatorScreen(
 
         composable(Routes.Discipline.route) {
             val user_ = mainState as MainState.Authorized
+            val viewModel: DisciplineViewModel = hiltViewModel()
+            val state_ = viewModel.state
 
             navController.previousBackStackEntry?.savedStateHandle?.get<Discipline>("discipline")
                 ?.let{ discipline ->
-//                    DisciplineScreen(
-//                        mainState = mainState,
-//
-//                        navigateToGrade =  {
-//                            if (user_.user.isTeacher){
-//                                navigateToTeacherGradeScreen(
-//                                    navController = navController,
-//                                    discipline = discipline
-//                                )
-//                            } else {
-//                                navigateToStudentGradeScreen(
-//                                    navController = navController,
-//                                    discipline = discipline
-//                                )
-//                            }
-//                        },
-//
-//                        discipline = discipline,
-//
-//                        navigateToParticipants = {
-//                            navigateToParticipantsScreen(
-//                                navController = navController,
-//                                discipline = discipline
-//                            )
-//                        }
-//                    )
+                    DisciplineScreen(
+                        mainState = mainState,
+
+                        navigateToGrade =  {
+                            if (user_.user.isTeacher){
+                                navigateToTeacherGradeScreen(
+                                    navController = navController,
+                                    discipline = discipline
+                                )
+                            } else {
+                                navigateToStudentGradeScreen(
+                                    navController = navController,
+                                    discipline = discipline
+                                )
+                            }
+                        },
+
+                        discipline = discipline,
+
+                        navigateToParticipants = {
+                            navigateToParticipantsScreen(
+                                navController = navController,
+                                discipline = discipline
+                            )
+                        },
+                        state = state_.value,
+                        onSectionClick = { section ->
+                            navigateToMaterialScreen(
+                                navController = navController,
+                                section = section
+                            ) },
+                         onLoading = viewModel::onLoading
+                    )
                 }
 
         }
@@ -206,6 +217,13 @@ private fun navigateToTeacherGradeScreen ( navController: NavHostController, dis
 
 private fun navigateToParticipantsScreen ( navController: NavHostController, discipline: Discipline){
     navController.currentBackStackEntry?.savedStateHandle?.set("discipline", discipline)
+    navController.navigate(
+        route = Routes.Participant.route
+    )
+}
+
+private fun navigateToMaterialScreen ( navController: NavHostController, section: MaterialSection){
+    navController.currentBackStackEntry?.savedStateHandle?.set("section", section)
     navController.navigate(
         route = Routes.Participant.route
     )

@@ -23,11 +23,13 @@ import com.example.sdo_project.domain.models.GradePoint
 import com.example.sdo_project.domain.models.GradeSection
 import com.example.sdo_project.domain.models.User
 import com.example.sdo_project.presentation.MainState
+import com.example.sdo_project.presentation.student_grade.StudentPointGradeState
 
 
 @Composable
 fun GradeSectionDetailedPart(
-    pointsGrades: Map<Int, List<GradePoint>?>,
+//    pointsGrades: Map<Int, List<GradePoint>?>,
+    pointsGrades: StudentPointGradeState,
     sectionsWithGrade: List<GradeSection>,
     onClick: (GradeSection, User) -> Unit,
     mainState: MainState
