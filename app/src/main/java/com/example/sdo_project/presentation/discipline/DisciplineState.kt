@@ -7,5 +7,6 @@ sealed class DisciplineState {
     object Start: DisciplineState()
     object Loading: DisciplineState()
     data class Success( val materialSections: List<MaterialSection>): DisciplineState()
+    data class Error (val message: String) : DisciplineState()
 
 }

@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Surface
@@ -32,12 +33,14 @@ import androidx.compose.ui.unit.dp
 import com.example.sdo_project.domain.models.Discipline
 import com.example.sdo_project.domain.models.Group
 import com.example.sdo_project.domain.models.User
+import com.example.sdo_project.presentation.common.LoadingElement
 
 @Composable
 fun ParticipantTeacherScreen(
     getGroupsByTeacherUuid: (String, Int) -> Unit,
     user: User,
-    participants: List<User>,
+    //participants: List<User>,
+    participantsState: ParticipantStudentListState,
     group: Group?,
     groups: ParticipantState,
     getStudentsByGroupId: (Int) -> Unit,
@@ -81,7 +84,10 @@ fun ParticipantTeacherScreen(
                     groups.groups.forEach { _group ->
                         DropdownMenuItem(
                             text = { Text(text = _group.name, color = Color.White) },
-                            onClick = {getStudentsByGroupId(_group.id)}
+                            onClick = {
+                                isExpanded = !isExpanded
+                                if (participantsState !is ParticipantStudentListState.Loading) getStudentsByGroupId(_group.id)
+                                }
                         )
                     }
                 }
@@ -101,29 +107,111 @@ fun ParticipantTeacherScreen(
                 .background(Color.Transparent)
                 .fillMaxWidth(), ) // for constraints SpacerHeight
 
-            LazyRow {
-                item{
-                    LazyColumn(
-                        verticalArrangement = Arrangement.spacedBy(10.dp)
-                    ) {
-                        item {
-                            ParticipantHeaderElement()
-                        }
+//
+//            LazyRow {
+//                item{
+//                    LazyColumn(
+//                        verticalArrangement = Arrangement.spacedBy(10.dp)
+//                    ) {
+//                        item {
+//                            ParticipantHeaderElement()
+//                        }
+//
+//                        items(participants.size){ index ->
+//                            val participant = participants[index]
+//                            ParticipantElement(
+//                                participant = participant,
+//                                group = group
+//                            )
+//                        }
+//                    }
+//                }
+//            }
 
-                        items(participants.size){ index ->
-                            val participant = participants[index]
-                            ParticipantElement(
-                                participant = participant,
-                                group = group
-                            )
-                        }
-                    }
-                }
-            }
+            HandleStateForStudentList(
+                state = participantsState,
+                group = group
+            )
 
         }
 
     }
+    else {
+        HandleNonSuccessStateForGroupList(groups,
+            {getGroupsByTeacherUuid(user.uuid, discipline.id)})
+    }
 
+
+}
+
+
+@Composable
+private fun HandleNonSuccessStateForGroupList(
+    state: ParticipantState,
+    onError: ()-> Unit
+){
+
+    if (state is  ParticipantState.Error){
+        Button(onClick = onError) {
+            Text(text= "Retry")
+        }
+    }
+    else {
+        LoadingElement()
+    }
+
+}
+
+@Composable
+private fun HandleNonSuccessStateForStudentList(
+    state: ParticipantStudentListState,
+){
+
+    if (state is ParticipantStudentListState.Error){
+
+            Text(text= "Retry")
+
+    }
+    else if (state is ParticipantStudentListState.Loading) {
+        LoadingElement()
+    }
+
+}
+
+@Composable
+private fun HandleStateForStudentList(
+    state: ParticipantStudentListState,
+    group: Group?,
+){
+
+    if (state is ParticipantStudentListState.Success ){
+
+        val participants = state.participants
+        LazyRow {
+            item{
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
+                    item {
+                        ParticipantHeaderElement()
+                    }
+
+                    items(participants.size){ index ->
+                        val participant = participants[index]
+                        ParticipantElement(
+                            participant = participant,
+                            group = group
+                        )
+                    }
+                }
+            }
+        }
+
+    }
+    else {
+        HandleNonSuccessStateForStudentList(
+            state = state
+        )
+    }
 
 }

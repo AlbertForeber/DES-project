@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -20,24 +21,25 @@ import com.example.sdo_project.domain.models.MaterialSection
 @Composable
 fun MaterialSectionsList (
     sections: List<MaterialSection>,
-    onClick: (Int, Int?) -> Unit,
-    discipline:Discipline
+    onClick: (MaterialSection) -> Unit,
 ){
 
     LazyColumn(
         modifier = Modifier.fillMaxWidth(),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
+
         items(sections.size) { index ->
             val section = sections[index]
 
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(150.dp)
+                    .height(100.dp)
                     .border(1.dp, Color.Black, RoundedCornerShape(20.dp))
+                    .padding(10.dp)
                     .clickable {
-                        onClick(discipline.id, null)
+                        onClick(section)
                     },
                 contentAlignment = Alignment.CenterStart
             ){

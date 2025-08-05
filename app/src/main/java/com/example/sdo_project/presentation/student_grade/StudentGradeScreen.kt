@@ -31,7 +31,8 @@ fun StudentGradeScreen(
     onLoading: (Int, User)-> Unit,
     onEvent: (GradeSection, User) -> Unit,
     state: StudentGradeState,
-    pointsGrades: Map<Int, List<GradePoint>?>,
+//    pointsGrades: Map<Int, List<GradePoint>?>,
+    pointsGrades: StudentPointGradeState,
     mainState: MainState
 ) {
 
@@ -71,8 +72,11 @@ fun StudentGradeScreen(
             )
 
         }
-        else if (state is StudentGradeState.Loading){
+        else if (state is StudentGradeState.Loading || state is StudentGradeState.Start){
             GradeSectionPartShimmer()
+        }
+        else {
+            Text(text = "Попробуйте чуть позже")
         }
 
 

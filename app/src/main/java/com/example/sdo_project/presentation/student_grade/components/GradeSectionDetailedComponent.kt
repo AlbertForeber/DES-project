@@ -31,12 +31,15 @@ import com.example.sdo_project.domain.models.GradePoint
 import com.example.sdo_project.domain.models.GradeSection
 import com.example.sdo_project.domain.models.User
 import com.example.sdo_project.presentation.MainState
+import com.example.sdo_project.presentation.common.LoadingElement
+import com.example.sdo_project.presentation.student_grade.StudentPointGradeState
 
 @Composable
 fun GradeSectionDetailedComponent (
     section: GradeSection,
     onClick: (GradeSection, User) -> Unit,
-    pointsGrades: Map<Int, List<GradePoint>?>,
+//    pointsGrades: Map<Int, List<GradePoint>?>,
+    pointsGrades: StudentPointGradeState,
     mainState: MainState
 ){
 
@@ -61,7 +64,8 @@ fun GradeSectionDetailedComponent (
             IconButton(
                 onClick = {
                     val mainState_ = mainState as MainState.Authorized
-                    if ( pointsGrades[section.id] == null ) onClick(section, mainState_.user)
+                    if ( pointsGrades !is StudentPointGradeState.Loading
+                        && pointsGrades.pointGrades[section.id] == null ) onClick(section, mainState_.user)
 
                     isDetailed = !isDetailed
                 }
@@ -74,14 +78,19 @@ fun GradeSectionDetailedComponent (
 
         //points list
         AnimatedVisibility(
-            visible = isDetailed && (pointsGrades[section.id] != null),
+            visible = isDetailed,
             enter = fadeIn() + expandVertically(),
             exit = fadeOut() + shrinkVertically(),
             modifier = Modifier.zIndex(1f)
         ) {
 
-            GradePointList(
-                points =  pointsGrades[section.id]!!
+
+//            GradePointList(
+//                points =  pointsGrades.pointGrades[section.id]!!
+//            )
+            HandleGradePointState(
+                state = pointsGrades,
+                section = section.id
             )
 
 
@@ -89,4 +98,28 @@ fun GradeSectionDetailedComponent (
     }
 
 
+}
+
+@Composable
+private fun HandleGradePointState(
+    state: StudentPointGradeState,
+    section: Int
+){
+    when(state){
+        is StudentPointGradeState.Start -> {
+            LoadingElement()
+        }
+        is StudentPointGradeState.Loading -> {
+            LoadingElement()
+        }
+        is StudentPointGradeState.Success -> {
+            Log.d("KATRIN_BE", " hiii ${state.pointGrades},   section $section")
+            GradePointList(
+                points =  state.pointGrades[section]!!
+            )
+        }
+        is StudentPointGradeState.Error -> {
+            Text(text="Попробуйте чуть позже")
+        }
+    }
 }

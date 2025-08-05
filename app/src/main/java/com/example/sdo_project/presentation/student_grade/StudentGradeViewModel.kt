@@ -8,7 +8,6 @@ import androidx.lifecycle.viewModelScope
 import com.example.sdo_project.domain.models.GradePoint
 import com.example.sdo_project.domain.models.GradeSection
 import com.example.sdo_project.domain.models.User
-import com.example.sdo_project.domain.usecase.auth.AuthUseCases
 import com.example.sdo_project.domain.usecase.grade.GradeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
@@ -19,7 +18,6 @@ import javax.inject.Inject
 
 @HiltViewModel
 class StudentGradeViewModel @Inject constructor(
-    private val authUseCases: AuthUseCases,
     private val gradeUseCase: GradeUseCase
 
 ): ViewModel(){
@@ -29,11 +27,16 @@ class StudentGradeViewModel @Inject constructor(
     val state: State<StudentGradeState> = _state
 
     // хранение в Map пунктов секций, ключами будут id секций
-    private val _pointsGrades = mutableStateOf<Map<Int, List<GradePoint>?>>(emptyMap())
-    val pointsGrades: State<Map<Int, List<GradePoint>?>> = _pointsGrades
+    private val _pointsGrades = mutableStateOf<StudentPointGradeState>(StudentPointGradeState.Start(emptyMap()))
+    val pointsGrades: State<StudentPointGradeState> = _pointsGrades
 
 
     fun onEvent( section: GradeSection, user: User){
+        val oldPointMap = _pointsGrades.value.pointGrades
+
+        _pointsGrades.value = StudentPointGradeState.Loading(
+            pointGrades =oldPointMap
+        )
 
         viewModelScope.launch(Dispatchers.IO) {
 
@@ -41,14 +44,27 @@ class StudentGradeViewModel @Inject constructor(
 
                     withContext(Dispatchers.Main){
 
-                        _pointsGrades.value = buildMap {
-                            putAll(_pointsGrades.value)
-                            put(section.id, list)
-                        }
+
+                        _pointsGrades.value = StudentPointGradeState.Success(
+                            pointGrades = buildMap {
+                                putAll(oldPointMap)
+                                put(section.id, list)
+                            }
+                        )
+
                     }
 
 
                 }.onFailure { error ->
+                    withContext(Dispatchers.Main){
+
+                        _pointsGrades.value = StudentPointGradeState.Error(
+                            pointGrades =oldPointMap,
+                            message = error.message ?: "Unknown message"
+                        )
+
+                    }
+
                     Log.d("SUPABASE_DB_LOGS", "StudentGradeViewModel list  onEvent: ${error.message}")
                 }
 
@@ -65,11 +81,12 @@ class StudentGradeViewModel @Inject constructor(
                 gradeUseCase.getSectionsGradesByStudentId(studentUuid = user.uuid, disciplineId = disciplineId).onSuccess { list ->
                     withContext(Dispatchers.Main){
                         _state.value = StudentGradeState.Success(sectionGradeList = list)
-                        _pointsGrades.value = createMapWithNoValues(list)
+                        _pointsGrades.value = StudentPointGradeState.Start(createMapWithNoValues(list))
+
                     }
 
                 }.onFailure { error ->
-                   //  _state.value = StudentGradeState. // Error state
+                   _state.value = StudentGradeState.Error(message = error.message ?: "Unknown Error") // Error state
                     Log.d("SUPABASE_DB_LOGS", "StudentGradeViewModel list onLoading: ${error.message}")
                 }
 

@@ -6,4 +6,5 @@ sealed class ParticipantState{
     object Start: ParticipantState()
     object Loading: ParticipantState()
     data class Success (val groups: List<Group>) : ParticipantState()
+    data class Error (val message: String) : ParticipantState()
 }
