@@ -19,6 +19,9 @@ import com.example.sdo_project.presentation.MainState
 import com.example.sdo_project.presentation.MainViewModel
 import com.example.sdo_project.presentation.material_section.MaterialSectionScreen
 import com.example.sdo_project.presentation.material_section.MaterialViewModel
+import com.example.sdo_project.presentation.navgraph.NavGraph
+import com.example.sdo_project.presentation.student_grade.StudentGradeScreen
+import com.example.sdo_project.presentation.student_grade.StudentGradeViewModel
 import com.example.sdo_project.presentation.teacher_grade_screen.TeacherGradeScreen
 import com.example.sdo_project.presentation.teacher_grade_screen.TeacherGradeViewModel
 import com.example.sdo_project.ui.theme.SDOprojectTheme
@@ -94,12 +97,12 @@ class MainActivity : ComponentActivity() {
                 //
 
 
-                LaunchedEffect(Unit) {
-                    client.auth.signInWith(Email) {
-                        email = "kate@mail.ru"
-                        password = "123123"
-                    }
-                }
+//                LaunchedEffect(Unit) {
+//                    client.auth.signInWith(Email) {
+//                        email = "kate@mail.ru"
+//                        password = "123123"
+//                    }
+//                }
 
 //                val techVM: TeacherGradeViewModel = hiltViewModel()
 //                val state = techVM.state.collectAsState()
@@ -125,21 +128,36 @@ class MainActivity : ComponentActivity() {
 //                    pointListState = listState.value
 //                )
 
-                val matSecViewModel: MaterialViewModel = hiltViewModel()
-                val state = matSecViewModel.state.collectAsState()
-                val backStack = matSecViewModel.backStack
-                MaterialSectionScreen(
-                    initialParent = MaterialSection(
-                        id = 6,
-                        name = "NestedFolder",
-                        parentId = 3,
-                        disciplineId = 2
-                    ),
-                    event = matSecViewModel::onEvent,
-                    state = state.value,
-                    backStack = backStack
-                ) {}
-                //NavGraph(viewModel)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//                val matSecViewModel: MaterialViewModel = hiltViewModel()
+//                val state = matSecViewModel.state.collectAsState()
+//                val backStack = matSecViewModel.backStack
+//                MaterialSectionScreen(
+//                    initialParent = MaterialSection(
+//                        id = 6,
+//                        name = "NestedFolder",
+//                        parentId = 3,
+//                        disciplineId = 2
+//                    ),
+//                    event = matSecViewModel::onEvent,
+//                    state = state.value,
+//                    backStack = backStack
+//                ) {}
+                NavGraph(viewModel)
             }
         }
     }

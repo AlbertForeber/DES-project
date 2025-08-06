@@ -1,12 +1,14 @@
 package com.example.sdo_project.presentation.material_section.components
 
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 
 @Composable
 fun MaterialsIconButton(
-    icon: Unit,
+    icon: ImageVector,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     active: Boolean = true
@@ -16,6 +18,6 @@ fun MaterialsIconButton(
         modifier = modifier,
         enabled = active
     ) {
-        icon
+        Icon(icon, null)
     }
 }

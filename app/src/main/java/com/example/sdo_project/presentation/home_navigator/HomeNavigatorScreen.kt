@@ -1,5 +1,6 @@
 package com.example.sdo_project.presentation.home_navigator
 
+import android.util.Log
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -17,6 +18,8 @@ import com.example.sdo_project.domain.models.Discipline
 import com.example.sdo_project.domain.models.MaterialSection
 import com.example.sdo_project.presentation.MainEvent
 import com.example.sdo_project.presentation.MainState
+import com.example.sdo_project.presentation.discipline.DisciplineScreen
+import com.example.sdo_project.presentation.discipline.DisciplineViewModel
 import com.example.sdo_project.presentation.home.HomeScreen
 import com.example.sdo_project.presentation.home.HomeViewModel
 import com.example.sdo_project.presentation.material_section.MaterialSectionScreen
@@ -85,23 +88,12 @@ fun HomeNavigatorScreen(
             navController.previousBackStackEntry?.savedStateHandle?.get<Discipline>("discipline")
                 ?.let {discipline ->
                     ParticipantScreen(
-//                user = User(
-//                    uuid = "830fac75-cb1b-426d-8f5d-c5780edde532",
-//                    isTeacher = true,
-//                    name = "Frolova",
-//                    surname = "Ekaterina",
-//                    patronymic = "Yakovlevna",
-//                    departmentId = 1,
-//                    personalCode = "ФШ1819",
-//                    country = "Russia",
-//                    city = "Moscow"
-//                ),
                         user = user_,
                         groups = teacher_groups,
                         group = chosen_group,
                         getStudentsByGroupId = participantViewModel::getStudentsByGroupId,
                         getGroupsByTeacherUuid = participantViewModel::getGroupsByTeacherId,
-                        participants = participants,
+                        participantsState = participants,
                         discipline = discipline
                     )
                 }
@@ -110,35 +102,46 @@ fun HomeNavigatorScreen(
 
         composable(Routes.Discipline.route) {
             val user_ = mainState as MainState.Authorized
+            val viewModel: DisciplineViewModel = hiltViewModel()
+            val state_ = viewModel.state
 
             navController.previousBackStackEntry?.savedStateHandle?.get<Discipline>("discipline")
                 ?.let{ discipline ->
-//                    DisciplineScreen(
-//                        mainState = mainState,
-//
-//                        navigateToGrade =  {
-//                            if (user_.user.isTeacher){
-//                                navigateToTeacherGradeScreen(
-//                                    navController = navController,
-//                                    discipline = discipline
-//                                )
-//                            } else {
-//                                navigateToStudentGradeScreen(
-//                                    navController = navController,
-//                                    discipline = discipline
-//                                )
-//                            }
-//                        },
-//
-//                        discipline = discipline,
-//
-//                        navigateToParticipants = {
-//                            navigateToParticipantsScreen(
-//                                navController = navController,
-//                                discipline = discipline
-//                            )
-//                        }
-//                    )
+                    DisciplineScreen(
+                        mainState = mainState,
+
+                        navigateToGrade =  {
+                            if (user_.user.isTeacher){
+                                navigateToTeacherGradeScreen(
+                                    navController = navController,
+                                    discipline = discipline
+                                )
+                            } else {
+                                navigateToStudentGradeScreen(
+                                    navController = navController,
+                                    discipline = discipline
+                                )
+                            }
+                        },
+
+                        discipline = discipline,
+
+                        navigateToParticipants = {
+                            navigateToParticipantsScreen(
+                                navController = navController,
+                                discipline = discipline
+                            )
+                        },
+                        state = state_.value,
+                        onSectionClick = { section ->
+                            navigateToMaterialSection(
+                                navController = navController,
+                                initParent = section
+                            )
+
+                        },
+                        onLoading = viewModel::onLoading
+                    )
                 }
 
         }
@@ -150,7 +153,6 @@ fun HomeNavigatorScreen(
 
             navController.previousBackStackEntry?.savedStateHandle?.get<Discipline>("discipline")
                 ?.let{ discipline ->
-
                     StudentGradeScreen(
                         state = studentGradeState,
                         onLoading = gradeVewModel::onLoading,
@@ -160,7 +162,7 @@ fun HomeNavigatorScreen(
                         mainState = mainState
                     )
                 }
-
+//
 //            StudentGradeScreen(
 //                state = studentGradeState,
 //                onLoading = gradeVewModel::onLoading,
@@ -201,6 +203,7 @@ fun HomeNavigatorScreen(
                     val viewModel: MaterialViewModel = hiltViewModel()
                     val state = viewModel.state.collectAsState()
                     val backStack = viewModel.backStack
+                    Log.d("MT_SCREEN_TEST", "$state, $backStack")
                     MaterialSectionScreen(
                         section,
                         event = viewModel::onEvent,

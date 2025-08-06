@@ -1,5 +1,6 @@
 package com.example.sdo_project.presentation.material_section
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,7 +12,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,7 +39,9 @@ fun MaterialSectionScreen(
     LaunchedEffect(Unit) {
         event(MaterialSectionEvent.Update(initialParent))
     }
-    
+
+
+
 
     Column(
         modifier = Modifier
@@ -55,7 +57,7 @@ fun MaterialSectionScreen(
         ) {
 
             MaterialsIconButton(
-                Icon(Icons.Default.Home, null),
+                Icons.Default.Home,
                 onClick = {
                     navigateToDiscipline()
                 }
@@ -88,7 +90,7 @@ fun MaterialSectionScreen(
         ) {
             when (state) {
                 is MaterialSectionState.Error -> {
-                    ErrorScreen(error = state.errorMessage) { event(MaterialSectionEvent.Update(null)) }
+                    ErrorScreen(error = state.errorMessage, retryButtonEnabled = true) { event(MaterialSectionEvent.Update(null)) }
                 }
                 is MaterialSectionState.Idle -> {
                     LazyColumn(
@@ -115,6 +117,7 @@ fun MaterialSectionScreen(
                 MaterialSectionState.Loading -> {
                     LoadingElement( modifier = Modifier.fillMaxSize() )
                 }
+
             }
         }
 

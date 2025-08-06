@@ -25,8 +25,7 @@ class MaterialViewModel @Inject constructor(
 
     private val _backStack = mutableStateListOf<MaterialSection>()
     val backStack: List<MaterialSection> = _backStack
-    private val currentParent = derivedStateOf<MaterialSection?> { _backStack.getOrNull(_backStack.lastIndex) }
-    val isPrevAvailable by derivedStateOf { currentParent.value != null }
+    private var currentParent = _backStack.getOrNull(_backStack.lastIndex)
     private var _state = MutableStateFlow<MaterialSectionState>(MaterialSectionState.Loading)
     val state = _state.asStateFlow()
 
@@ -44,7 +43,7 @@ class MaterialViewModel @Inject constructor(
                         _backStack.indexOf(event.section) + 1,
                         _backStack.lastIndex + 1
                     )
-                    currentParent.value?.let { getMaterialSections(it) }
+                    _backStack.lastOrNull()?.let { getMaterialSections(it) }
                 }
 
                 is MaterialSectionEvent.Update -> {
@@ -53,8 +52,7 @@ class MaterialViewModel @Inject constructor(
                         getMaterialSections(event.parent)
                     }
                     else
-                        Log.d("MATERIAL_TEST", currentParent.value.toString())
-                        currentParent.value?.let { getMaterialSections(it) }
+                        _backStack.lastOrNull()?.let { getMaterialSections(it) }
                 }
             }
         }
