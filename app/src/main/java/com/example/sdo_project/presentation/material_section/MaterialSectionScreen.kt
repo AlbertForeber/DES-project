@@ -21,6 +21,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.example.sdo_project.domain.models.Material
 import com.example.sdo_project.domain.models.MaterialSection
+import com.example.sdo_project.presentation.common.DesButton
 import com.example.sdo_project.presentation.common.error_screen.ErrorScreen
 import com.example.sdo_project.presentation.common.LoadingElement
 import com.example.sdo_project.presentation.common.MaterialCard
@@ -34,7 +35,10 @@ fun MaterialSectionScreen(
     event: (MaterialSectionEvent ) -> Unit,
     state: MaterialSectionState,
     backStack: List<MaterialSection>,
-    navigateToDiscipline: () -> Unit
+    navigateToAddMaterial: (MaterialSection) -> Unit,
+    navigateToDiscipline: () -> Unit,
+
+
 ) {
     LaunchedEffect(Unit) {
         event(MaterialSectionEvent.Update(initialParent))
@@ -112,7 +116,21 @@ fun MaterialSectionScreen(
                                 MaterialCard(it)
                             }
                         }
+
+                        item {
+                            DesButton(
+                                onClick = { navigateToAddMaterial(backStack.last()) },
+                                inText = "Добавить материал"
+                            )
+                        }
+
+
+
+
+
                     }
+
+
                 }
                 MaterialSectionState.Loading -> {
                     LoadingElement( modifier = Modifier.fillMaxSize() )
@@ -121,69 +139,73 @@ fun MaterialSectionScreen(
             }
         }
 
+
+
+
+
     }
 
 }
 
 
-@Preview(showBackground = true)
-@Composable
-fun MaterialSectionScreenPreview() {
-    MaterialSectionScreen(
-        MaterialSection(
-            id = 2,
-            name = "FirstSect",
-            parentId = 1,
-            disciplineId = 1
-        ),
-        event = { },
-        state = MaterialSectionState.Idle(
-            availableSections = listOf(
-                MaterialSection(
-                    id = 3,
-                    name = "ExampleSection",
-                    parentId = 2,
-                    disciplineId = 1
-                ),
-                MaterialSection(
-                    id = 4,
-                    name = "ExampleSection",
-                    parentId = 2,
-                    disciplineId = 1
-                )
-            ),
-            availableMaterials = listOf(
-                Material(
-                    id = 1,
-                    name = "ExampleMaterial",
-                    sectionId = 2,
-                    accessTime = "11.11.11",
-                    content = ""
-                )
-            )
-        ),
-        backStack = listOf(
-            MaterialSection(
-                id = 1,
-                name = "ExampleSection",
-                parentId = null,
-                disciplineId = 1
-            ),
-            MaterialSection(
-                id = 2,
-                name = "ExampleSection",
-                parentId = 1,
-                disciplineId = 1
-            ),
-            MaterialSection(
-                id = 2,
-                name = "ExampleSection",
-                parentId = 1,
-                disciplineId = 1
-            )
-
-
-        ),
-        navigateToDiscipline = {}
-    )
-}
+//@Preview(showBackground = true)
+//@Composable
+//fun MaterialSectionScreenPreview() {
+//    MaterialSectionScreen(
+//        MaterialSection(
+//            id = 2,
+//            name = "FirstSect",
+//            parentId = 1,
+//            disciplineId = 1
+//        ),
+//        event = { },
+//        state = MaterialSectionState.Idle(
+//            availableSections = listOf(
+//                MaterialSection(
+//                    id = 3,
+//                    name = "ExampleSection",
+//                    parentId = 2,
+//                    disciplineId = 1
+//                ),
+//                MaterialSection(
+//                    id = 4,
+//                    name = "ExampleSection",
+//                    parentId = 2,
+//                    disciplineId = 1
+//                )
+//            ),
+//            availableMaterials = listOf(
+//                Material(
+//                    id = 1,
+//                    name = "ExampleMaterial",
+//                    sectionId = 2,
+//                    accessTime = "11.11.11",
+//                    content = ""
+//                )
+//            )
+//        ),
+//        backStack = listOf(
+//            MaterialSection(
+//                id = 1,
+//                name = "ExampleSection",
+//                parentId = null,
+//                disciplineId = 1
+//            ),
+//            MaterialSection(
+//                id = 2,
+//                name = "ExampleSection",
+//                parentId = 1,
+//                disciplineId = 1
+//            ),
+//            MaterialSection(
+//                id = 2,
+//                name = "ExampleSection",
+//                parentId = 1,
+//                disciplineId = 1
+//            )
+//
+//
+//        ),
+//        navigateToDiscipline = {}
+//    )
+//}

@@ -23,6 +23,7 @@ import androidx.navigation.NavHostController
 import com.example.sdo_project.domain.models.Discipline
 import com.example.sdo_project.domain.models.MaterialSection
 import com.example.sdo_project.presentation.MainState
+import com.example.sdo_project.presentation.common.DesButton
 import com.example.sdo_project.presentation.common.LoadingElement
 
 @Composable
@@ -33,7 +34,8 @@ fun DisciplineScreen(
     navigateToParticipants: () -> Unit,
     state: DisciplineState,
     onSectionClick: (MaterialSection) -> Unit,
-    onLoading: (Discipline) -> Unit
+    onLoading: (Discipline) -> Unit,
+    navigateToAddMaterial: () -> Unit
 ) {
 
     LaunchedEffect(Unit) {
@@ -43,60 +45,91 @@ fun DisciplineScreen(
 
     val checkedState = handleDisciplineState(state)
 
-    Column(
-        modifier = Modifier.fillMaxSize().padding(10.dp),
+    LazyColumn(
+        modifier = Modifier.fillMaxSize().padding(horizontal = 10.dp),
 
     ) {
 
-        Text(text = discipline.name)
+        item{
+            Text(text = discipline.name)
+        }
 
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
+        item {
 
-            Button(
-                onClick = { navigateToGrade() }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
             ) {
-                Text(text = "Баллы")
-            }
 
-            Button(
-                onClick = { navigateToParticipants() }
-            ) {
-                Text(text = "Участниики")
+                Button(
+                    onClick = { navigateToGrade() }
+                ) {
+                    Text(text = "Баллы")
+                }
+
+                Button(
+                    onClick = { navigateToParticipants() }
+                ) {
+                    Text(text = "Участниики")
+                }
             }
         }
 
+        item {
+            Spacer(modifier = Modifier.height(5.dp).background(Color.Transparent).fillMaxWidth(), ) // for constraints SpacerHeight
+            Spacer(modifier = Modifier.height(1.dp).background(Color.Black).fillMaxWidth(), )
+            Spacer(modifier = Modifier.height(10.dp).background(Color.Transparent).fillMaxWidth(), ) // for constraints SpacerHeight
 
-        Spacer(modifier = Modifier.height(5.dp).background(Color.Transparent).fillMaxWidth(), ) // for constraints SpacerHeight
-        Spacer(modifier = Modifier.height(1.dp).background(Color.Black).fillMaxWidth(), )
-        Spacer(modifier = Modifier.height(10.dp).background(Color.Transparent).fillMaxWidth(), ) // for constraints SpacerHeight
-
-
-        Text(text = "Общие Сведения")
-
-        Text(
-            text = "Кафедра: ${discipline.departmentName}\nИнститут: ${discipline.instituteName}"
-        )
+        }
 
 
-        Spacer(modifier = Modifier.height(5.dp).background(Color.Transparent).fillMaxWidth(), ) // for constraints SpacerHeight
-        Spacer(modifier = Modifier.height(1.dp).background(Color.Black).fillMaxWidth(), )
-        Spacer(modifier = Modifier.height(10.dp).background(Color.Transparent).fillMaxWidth(), ) // for constraints SpacerHeight
+        item {
+            Text(text = "Общие Сведения")
+        }
 
-
-        if ( checkedState){
-
-            val state_ = state as DisciplineState.Success
-            MaterialSectionsList(
-                sections = state_.materialSections,
-                onClick = onSectionClick
+        item {
+            Text(
+                text = "Кафедра: ${discipline.departmentName}\nИнститут: ${discipline.instituteName}"
             )
-
-        }else {
-            HandleNonSuccessState(state = state)
         }
+
+        item {
+            Spacer(modifier = Modifier.height(5.dp).background(Color.Transparent).fillMaxWidth(), ) // for constraints SpacerHeight
+            Spacer(modifier = Modifier.height(1.dp).background(Color.Black).fillMaxWidth(), )
+            Spacer(modifier = Modifier.height(10.dp).background(Color.Transparent).fillMaxWidth(), ) // for constraints SpacerHeight
+
+        }
+
+
+
+
+
+
+
+        item {
+            if ( checkedState){
+
+                val state_ = state as DisciplineState.Success
+                MaterialSectionsList(
+                    sections = state_.materialSections,
+                    onClick = onSectionClick
+                )
+
+            }else {
+                HandleNonSuccessState(state = state)
+            }
+        }
+
+        item {
+            if ((mainState as MainState.Authorized).user.isTeacher){
+                DesButton(
+                    inText = "Добавить материал",
+                    onClick = {navigateToAddMaterial()}
+                )
+            }
+        }
+
+
 
     }
 

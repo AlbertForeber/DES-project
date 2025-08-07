@@ -4,8 +4,11 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -24,13 +27,12 @@ fun MaterialSectionsList (
     onClick: (MaterialSection) -> Unit,
 ){
 
-    LazyColumn(
-        modifier = Modifier.fillMaxWidth(),
+    Column(
+        modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(10.dp)
     ) {
 
-        items(sections.size) { index ->
-            val section = sections[index]
+        sections.forEach { section ->
 
             Box(
                 modifier = Modifier

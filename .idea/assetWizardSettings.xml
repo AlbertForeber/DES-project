@@ -18,7 +18,7 @@
                                 <PersistentState>
                                   <option name="values">
                                     <map>
-                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialsymbolsoutlined/keyboard_arrow_down/outline_keyboard_arrow_down_24.xml" />
+                                      <entry key="url" value="file:/$USER_HOME$/AppData/Local/Android/Sdk/icons/material/materialicons/remove/baseline_remove_24.xml" />
                                     </map>
                                   </option>
                                 </PersistentState>
@@ -28,7 +28,7 @@
                         </option>
                         <option name="values">
                           <map>
-                            <entry key="outputName" value="ic_arrow_down" />
+                            <entry key="outputName" value="remove_icon" />
                             <entry key="sourceFile" value="C:\Users\ADMIN\AndroidStudioProjects\DES-project" />
                           </map>
                         </option>

@@ -31,6 +31,9 @@ import com.example.sdo_project.domain.usecase.grade.GradeUseCase
 import com.example.sdo_project.domain.usecase.group.GetGroupByIdUseCase
 import com.example.sdo_project.domain.usecase.group.GetGroupsOfTeacherUseCase
 import com.example.sdo_project.domain.usecase.group.GetStudentsByGroupIdUseCase
+import com.example.sdo_project.domain.usecase.material.AddMaterialSectionUseCase
+import com.example.sdo_project.domain.usecase.material.AddMaterialSectionsUseCase
+import com.example.sdo_project.domain.usecase.material.AddMaterialUseCase
 import com.example.sdo_project.domain.usecase.material.GetMaterialSectionsUseCase
 import com.example.sdo_project.domain.usecase.material.GetMaterialsUseCase
 import com.example.sdo_project.domain.usecase.user.EditUserUseCase
@@ -212,6 +215,24 @@ object AppModule {
     fun provideGetMaterials (
         repo: MaterialRepository
     ): GetMaterialsUseCase = GetMaterialsUseCase(repo)
+
+    @Provides
+    @Singleton
+    fun provideAddMaterial (
+        repo: MaterialRepository
+    ): AddMaterialUseCase = AddMaterialUseCase(repo)
+
+    @Provides
+    @Singleton
+    fun provideAddMaterialSection (
+        repo: MaterialRepository
+    ): AddMaterialSectionUseCase = AddMaterialSectionUseCase(repo)
+
+    @Provides
+    @Singleton
+    fun provideAddMaterialSections (
+        repo: MaterialRepository
+    ): AddMaterialSectionsUseCase = AddMaterialSectionsUseCase(repo)
 
 
 }

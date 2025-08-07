@@ -18,6 +18,9 @@ import com.example.sdo_project.domain.models.Discipline
 import com.example.sdo_project.domain.models.MaterialSection
 import com.example.sdo_project.presentation.MainEvent
 import com.example.sdo_project.presentation.MainState
+import com.example.sdo_project.presentation.add_material.AddMaterialScreen
+import com.example.sdo_project.presentation.add_material.AddMaterialViewModel
+import com.example.sdo_project.presentation.add_material.getTypeAddingItemsMap
 import com.example.sdo_project.presentation.discipline.DisciplineScreen
 import com.example.sdo_project.presentation.discipline.DisciplineViewModel
 import com.example.sdo_project.presentation.home.HomeScreen
@@ -140,7 +143,12 @@ fun HomeNavigatorScreen(
                             )
 
                         },
-                        onLoading = viewModel::onLoading
+                        onLoading = viewModel::onLoading,
+                         navigateToAddMaterial = {
+                             navigateToAddMaterialScreen(
+                                 navController = navController,
+                                 discipline = discipline)
+                         }
                     )
                 }
 
@@ -208,11 +216,62 @@ fun HomeNavigatorScreen(
                         section,
                         event = viewModel::onEvent,
                         state = state.value,
-                        backStack = backStack
+                        backStack = backStack,
+                        navigateToAddMaterial = { section_ ->
+                            navigateToAddMaterialScreenFromMaterialSection (
+                                navController = navController,
+                                section = section_
+                            )
+                        }
                     ) {
                         navController.navigateUp()
                     }
             }
+        }
+
+        composable(Routes.AddMaterial.route) {
+
+            val mapOfTypeAddingItem = getTypeAddingItemsMap()
+            val viewModel : AddMaterialViewModel = hiltViewModel()
+            val state_ = viewModel.state.value
+
+            // навигация с экрана  дисциплины
+            navController.previousBackStackEntry?.savedStateHandle?.get<Discipline>("discipline")
+                ?.let{discipline ->
+                    AddMaterialScreen(
+                        discipline = discipline,
+                        mapOfTypeAddingItems = mapOfTypeAddingItem,
+                        addMaterial = viewModel::addMaterial,
+                        addSections = viewModel::addSections,
+                        addSection = viewModel::addSection,
+                        state = state_,
+                        moveBack = {
+                            navigateToDetails(
+                                navController = navController,
+                                discipline = discipline
+                            )
+                        }
+                    )
+                }
+
+            // навигация с экрана  section
+            navController.previousBackStackEntry?.savedStateHandle?.get<MaterialSection>("material_section")
+                ?.let{materialSection ->
+                    AddMaterialScreen(
+                        initialParent = materialSection,
+                        mapOfTypeAddingItems = mapOfTypeAddingItem,
+                        addMaterial = viewModel::addMaterial,
+                        addSections = viewModel::addSections,
+                        addSection = viewModel::addSection,
+                        state = state_,
+                        moveBack = {
+                            navigateToMaterialSection(
+                                navController = navController,
+                                initParent = materialSection
+                            )
+                        }
+                    )
+                }
         }
     }
 }
@@ -247,5 +306,19 @@ private fun navigateToParticipantsScreen ( navController: NavHostController, dis
     navController.currentBackStackEntry?.savedStateHandle?.set("discipline", discipline)
     navController.navigate(
         route = Routes.Participant.route
+    )
+}
+
+private fun navigateToAddMaterialScreen ( navController: NavHostController, discipline: Discipline){
+    navController.currentBackStackEntry?.savedStateHandle?.set("discipline", discipline)
+    navController.navigate(
+        route = Routes.AddMaterial.route
+    )
+}
+
+private fun navigateToAddMaterialScreenFromMaterialSection ( navController: NavHostController, section: MaterialSection){
+    navController.currentBackStackEntry?.savedStateHandle?.set("material_section", section)
+    navController.navigate(
+        route = Routes.AddMaterial.route
     )
 }

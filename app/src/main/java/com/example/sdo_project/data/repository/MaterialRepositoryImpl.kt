@@ -1,8 +1,10 @@
 package com.example.sdo_project.data.repository
 
+import android.util.Log
 import com.example.sdo_project.data.remote.dto.MaterialDto
 import com.example.sdo_project.data.remote.dto.MaterialSectionDto
 import com.example.sdo_project.data.remote.dto.NewMaterialDto
+import com.example.sdo_project.data.remote.dto.NewMaterialSectionDto
 import com.example.sdo_project.domain.models.Material
 import com.example.sdo_project.domain.models.MaterialSection
 import com.example.sdo_project.domain.repository.MaterialRepository
@@ -11,7 +13,9 @@ import io.github.jan.supabase.exceptions.RestException
 import io.github.jan.supabase.postgrest.exception.PostgrestRestException
 import io.github.jan.supabase.postgrest.from
 import io.github.jan.supabase.postgrest.postgrest
+import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.encodeToJsonElement
 import kotlinx.serialization.json.put
 import kotlin.time.ExperimentalTime
 
@@ -82,6 +86,40 @@ class MaterialRepositoryImpl(
         }
     }
 
+    override suspend fun addMaterialSection(section: MaterialSection): Result<Unit> {
+        try {
+            client.from("material_section").insert(section.toData())
+            return Result.success(Unit)
+        }
+        catch (e: PostgrestRestException){
+            return  Result.failure(e)
+        }
+        catch (e: Exception){
+            return  Result.failure(e)
+        }
+    }
+
+    override suspend fun addMaterialSections(sections: List<MaterialSection>, initialParent: Int?): Result<Unit> {
+        val newSections = sections.map { it.toDataNull() }
+
+
+        try {
+            client.postgrest.rpc("add_many_sections",
+                buildJsonObject {
+                    put ("initial_parent_id", initialParent)
+                    put("sections", Json.encodeToJsonElement(newSections))
+                })
+            return Result.success(Unit)
+        }
+        catch (e: PostgrestRestException){
+            return  Result.failure(e)
+        }
+        catch (e: Exception){
+            return  Result.failure(e)
+        }
+
+    }
+
 
     @OptIn(ExperimentalTime::class)
     private fun MaterialDto.toDomain(): Material{
@@ -108,6 +146,21 @@ class MaterialRepositoryImpl(
             id  = id,
             name = name,
             parentId = parentId,
+            disciplineId = disciplineId
+        )
+    }
+
+    private fun MaterialSection.toData(): NewMaterialSectionDto {
+        return NewMaterialSectionDto(
+            name = name,
+            parentId = parentId,
+            disciplineId = disciplineId
+        )
+    }
+
+    private fun MaterialSection.toDataNull(): NewMaterialSectionDto {
+        return NewMaterialSectionDto(
+            name = name,
             disciplineId = disciplineId
         )
     }

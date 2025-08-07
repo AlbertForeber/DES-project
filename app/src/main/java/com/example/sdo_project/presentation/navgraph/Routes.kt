@@ -15,4 +15,5 @@ sealed class Routes( val route: String ) {
     data object TeacherGrade: Routes("teacherGrade")
     data object Participant: Routes("participant")
     data object Profile: Routes("profile")
+    data object AddMaterial: Routes("addMaterial")
 }
